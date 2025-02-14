@@ -6,8 +6,8 @@ export const register = async (email:string, username: string, password: string)
   try {
     const response = await axios.post(`${API_URL}/auth/register`, { email, username, password });
     return response.data;
-  } catch (error:any) {
-    throw error.response.data;
+  } catch (error: unknown) {
+      //throw error.response.data;
   }
 };
 
@@ -16,8 +16,8 @@ export const login = async (email:string, password: string) => {
     try {
       const response = await axios.post(`${API_URL}/auth/login`, {email, password });
       return response.data;
-    } catch (error:any) {
-      throw error.response.data;
+    } catch (error:unknown) {
+      //throw error.response.data;
     }
   };
 
@@ -29,13 +29,12 @@ export const getProfile = async (token: string) => {
         },
       });
       return response.data;
-    } catch (error: any) {
-      throw error.response.data;
+    } catch (error: unknown) {
+     // throw error.response.data;
     }
   };
 
   export const updateProfile = async (token: string | null, userData:any) => {
-    console.log(userData);
     try {
       const response = await axios.put(`${API_URL}/users/update`, userData, {
         headers: {
@@ -43,8 +42,8 @@ export const getProfile = async (token: string) => {
         },
       });
       return response.data;
-    } catch (error:any) {
-      throw error.response.data;
+    } catch (error:unknown) {
+      //throw error.response.data;
     }
   };
 
@@ -57,8 +56,8 @@ export const getProfile = async (token: string) => {
         },
       });
       return response.data;
-    } catch (error: any) {
-      throw error.response.data;
+    } catch (error: unknown) {
+      //throw error.response.data;
     }
   };
 
@@ -70,10 +69,9 @@ export const getProfile = async (token: string) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
       return response.data;
-    } catch (error: any) {
-      throw error.response.data;
+    } catch (error: unknown) {
+      //throw error.response.data;
     }
   };
 
@@ -85,8 +83,8 @@ export const getProfile = async (token: string) => {
         },
       });
       return response.data;
-    } catch (error: any) {
-      throw error.response.data;
+    } catch (error: unknown) {
+      //throw error.response.data;
     }
   };
 
@@ -98,8 +96,8 @@ export const getProfile = async (token: string) => {
         },
       });
       return response.data;
-    } catch (error:any) {
-      throw error.response.data;
+    } catch (error:unknown) {
+      //throw error.response.data;
     }
   };
  

@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: chat-backend
+    restart: always
+    ports:
+      - "3001:3000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - mongodb
+    networks:
+      - chat-network
+
+  frontend:
+    build: ./frontend
+    container_name: chat-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    networks:
+      - chat-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: chat-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - chat-network
+    env_file:
+      - ./backend/.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: db_secret
+      MONGO_DB_NAME: chatdb
+
+networks:
+  chat-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

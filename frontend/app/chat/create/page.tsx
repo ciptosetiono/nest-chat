@@ -1,13 +1,12 @@
 "use client";
 import { useState } from 'react';
 import { createRoom } from '@/app/services/api';
-import { useRouter } from 'next/navigation';
 
 export default function CreateChatForm() {
    const [name, setName] = useState('');
    const [members, setMembers] = useState('');
    const [message, setMessage] = useState('');
-   const router = useRouter();
+  
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
      e.preventDefault();
      try {
@@ -17,7 +16,7 @@ export default function CreateChatForm() {
        if(members!=''){
         membersId = members.split(',').map(id => id.trim());
        }
-       const data = await createRoom(token, name, membersId);
+       await createRoom(token, name, membersId);
        setMessage('Chat created successfully');
        
      } catch (err: unknown) {
