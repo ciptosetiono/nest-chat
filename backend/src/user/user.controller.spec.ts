@@ -2,11 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { JwtGuard } from '../auth/guard';
-import { ForbiddenException, BadRequestException, ValidationPipe } from '@nestjs/common';
+import { NotFoundException, ForbiddenException, BadRequestException, ValidationPipe } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './user.schema';
 import { Types } from 'mongoose';
-import { GetUser } from '../decorator/get-user.decorator';
+
 
 // Mock UserService
 const mockUserService = {
@@ -60,9 +60,9 @@ describe('UserController', () => {
       expect(result).toEqual(mockUser);
     });
 
-    it('should throw ForbiddenException if no user is present', () => {
+    it('should throw not found exception if no user is present', () => {
         const getUser = jest.fn().mockReturnValue(null);
-        expect(() => controller.getMe(getUser())).toThrow(ForbiddenException);
+        expect(() => controller.getMe(getUser())).toThrow(NotFoundException);
     });
   });
 

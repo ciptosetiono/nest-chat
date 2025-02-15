@@ -7,7 +7,7 @@ async function bootstrap() {
 
   //setting cors
   app.enableCors({
-    origin: 'http://localhost:3000', // Sesuaikan dengan frontend kamu
+    origin: '*', // Allow all origins
     credentials: true, // Jika menggunakan cookies atau auth token
   });
 
@@ -18,6 +18,6 @@ async function bootstrap() {
       transform: true
     },
   ));
-  await app.listen(process.env.PORT ?? 3030);
+  await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();

@@ -28,7 +28,7 @@ services:
       - chat-network
 
   mongodb:
-    image: mongo:latest
+    image: mongo:4.4.6
     container_name: chat-mongodb
     restart: always
     ports:

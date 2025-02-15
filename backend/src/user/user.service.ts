@@ -3,6 +3,8 @@ import { Model } from 'mongoose';
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "src/user/user.schema";
+import { SearchUserDto } from './dto/search-user.dto';
+import { DefaultPagination } from '../common/const/default-pagination';
 
 export class UserService {
      constructor(
@@ -33,4 +35,25 @@ export class UserService {
                         .find({username: {$in: usernames}})
                         .lean();
     }
+
+
+    async searchUsers(dto: SearchUserDto): Promise<{users: User[], total:number}> {
+
+        //get query, page and limit from dto
+        const {query, page = DefaultPagination.page, limit = DefaultPagination.limit} = dto;
+
+        //calculate skip
+        const skip = (page - 1) * limit;
+        
+        //search user by username with pagination
+        const users = await this.userModel.find({username: {$regex: query, $options: 'i'}})
+                                          .skip(skip)
+                                          .limit(limit)
+                                          .lean();
+        //count total user
+        const total = await this.userModel.countDocuments({username: {$regex: query, $options: 'i'}});
+
+        return {users, total};
+    }
+       
 }

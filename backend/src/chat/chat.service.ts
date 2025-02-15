@@ -3,24 +3,24 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { GetChatDto } from './dto/get-chat.dto';
-import { Chat, ChatDocument } from './chat.schema';
-import { DefaultPagination } from 'src/common/const/default-pagination';
+import { Chat } from './chat.schema';
+import { DefaultPagination } from '../common/const/default-pagination';
 
 
 @Injectable()
 export class ChatService {
     constructor(
-        @InjectModel(Chat.name) private chatModel: Model<ChatDocument>
+        @InjectModel(Chat.name) private chatModel: Model<Chat>
     ) {}
  
     //create chat message
     async createChat(senderId, dto: CreateChatDto): Promise<Chat>{
 
-      const newChat = new this.chatModel({...dto, sender: senderId});
+      const newChat = await this.chatModel.create({...dto, sender: senderId});
 
-      const savedChat = await newChat.save();
+      //const savedChat = await newChat.save();
 
-      return savedChat.populate('sender', 'username');
+      return newChat.populate('sender', 'username');
 
     }
 
@@ -52,8 +52,4 @@ export class ChatService {
       }
                           
     }
-
-
-
-
 }

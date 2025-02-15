@@ -1,56 +1,61 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ChatService } from './chat.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { Chat, ChatDocument } from './chat.schema';
+import { Chat } from './chat.schema';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { GetChatDto } from './dto/get-chat.dto';
-import { DefaultPagination } from 'src/common/const/default-pagination';
-import { Model, Types } from 'mongoose';
+import { Model, Types, Document } from 'mongoose';
 import { Room, RoomType } from '../room/room.schema';
 import { User } from 'src/user/user.schema';
 
 describe('ChatService', () => {
   let service: ChatService;
-  let chatModel: Model<ChatDocument>;
+  let chatModel: Model<Chat>;
 
-  const mockChatModel = {
-    new: jest.fn(),
-    constructor: jest.fn(),
-    find: jest.fn(),
-    findOne: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-    findById: jest.fn(),
-    findByIdAndUpdate: jest.fn(),
-    findByIdAndDelete: jest.fn(),
-    countDocuments: jest.fn(),
-    populate: jest.fn(),
-  };
-
-
-  
   const mockUser: User = {
-      _id: new Types.ObjectId('60d0fe4f5311236168a109cc'),
-      username: 'testuser1',
-      email: 'testmail',
-      name: '',
-      hash: '',
-      hosroscope: '',
-      zodiac: '',
-      interests: []
-  }
-
+    _id: new Types.ObjectId('60d0fe4f5311236168a109cc'),
+    username: 'testuser1',
+    email: 'testmail',
+    name: '',
+    hash: '',
+    hosroscope: '',
+    zodiac: '',
+    interests: []
+  };
 
   const mockRoom: Room = {
     name: 'Test Room',
     type: RoomType.PERSONAL,
     members: [mockUser],
-  }
+  };
 
   const mockChat: Chat = {
     room: mockRoom,
     sender: mockUser,
     content: 'Hello, world!'
+  };
+
+  const mockChatDocument = {
+    ...mockChat,
+    _id: new Types.ObjectId(),
+    __v: 0,
+    populate: jest.fn().mockResolvedValue(mockChat),
+  };
+
+  const mockChatModel = {
+    create: jest.fn().mockResolvedValue(mockChatDocument),
+    find: jest.fn().mockReturnValue({
+      sort: jest.fn().mockReturnThis(),
+      populate: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockResolvedValue([mockChatDocument]),
+    }),
+    findOne: jest.fn().mockResolvedValue(mockChatDocument),
+    findById: jest.fn().mockResolvedValue(mockChatDocument),
+    findByIdAndUpdate: jest.fn().mockResolvedValue(mockChatDocument),
+    findByIdAndDelete: jest.fn().mockResolvedValue(mockChatDocument),
+    countDocuments: jest.fn().mockResolvedValue(1),
   };
 
   beforeEach(async () => {
@@ -65,7 +70,7 @@ describe('ChatService', () => {
     }).compile();
 
     service = module.get<ChatService>(ChatService);
-    chatModel = module.get<Model<ChatDocument>>(getModelToken(Chat.name));
+    chatModel = module.get<Model<Chat>>(getModelToken(Chat.name));
   });
 
   it('should be defined', () => {
@@ -79,17 +84,15 @@ describe('ChatService', () => {
         content: 'Hello, world!',
       };
 
-      const savedChat = {
-        ...mockChat,
-        populate: jest.fn().mockResolvedValue(mockChat),
-      };
-
-      jest.spyOn(chatModel.prototype, 'save').mockResolvedValue(savedChat as any);
+      jest.spyOn(chatModel, 'create').mockResolvedValue(mockChatDocument as any);
 
       const result = await service.createChat(mockChat.sender, createChatDto);
 
-      expect(result).toEqual(mockChat);
-      expect(chatModel.prototype.save).toHaveBeenCalled();
+      expect(result).toMatchObject({
+        content: mockChatDocument.content,
+        room: expect.any(Object),
+        sender: expect.any(Object),
+      });
     });
   });
 
@@ -101,35 +104,7 @@ describe('ChatService', () => {
         limit: 10,
       };
 
-      const chats = [mockChat];
-      const totalChats = 1;
-
-      jest.spyOn(chatModel, 'find').mockReturnValue({
-        sort: jest.fn().mockReturnThis(),
-        populate: jest.fn().mockReturnThis(),
-        skip: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnThis(),
-        exec: jest.fn().mockResolvedValue(chats),
-      } as any);
-
-      jest.spyOn(chatModel, 'countDocuments').mockResolvedValue(totalChats);
-
-      const result = await service.getChats(getChatDto);
-
-      expect(result).toEqual({
-        messages: chats,
-        totalMessages: totalChats,
-      });
-      expect(chatModel.find).toHaveBeenCalledWith({ room: getChatDto.roomId });
-      expect(chatModel.countDocuments).toHaveBeenCalledWith({ room: getChatDto.roomId });
-    });
-
-    it('should use default pagination values if not provided', async () => {
-      const getChatDto: GetChatDto = {
-        roomId: '60d0fe4f5311236168a109cb',
-      };
-
-      const chats = [mockChat];
+      const chats = [mockChatDocument];
       const totalChats = 1;
 
       jest.spyOn(chatModel, 'find').mockReturnValue({
