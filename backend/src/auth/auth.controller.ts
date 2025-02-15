@@ -10,14 +10,14 @@ export class AuthController {
 
     @Post('register')
     async register(
-        @Body() dto: RegisterDto
+        @Body() dto: RegisterDto,
     ): Promise<{user: User, accessToken: string}>{
         return  await this.authService.signup(dto);
     }
 
     @Post('login')
     async signin(
-        @Body() dto: LoginDto
+        @Body() dto: LoginDto,
     ): Promise<{user: User, accessToken: string}> {
         return  await this.authService.signin(dto);
     }

@@ -1,6 +1,6 @@
 import {  Injectable, BadRequestException, ForbiddenException, NotFoundException  } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import * as argon  from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -34,16 +34,15 @@ export class AuthService {
       const hashedPassword = await argon.hash(dto.password);
 
       //create new user
-      const user =  new this.userModel(
-                          { ...dto, hash: hashedPassword 
-                            
-                          });
+      const user =  new this.userModel({ ...dto, hash: hashedPassword, _id: new Types.ObjectId()});
+     
+      //save the new user
       const savedUser: User = await user.save();
 
-      //return jwt acces token
-       //sign jwt access token
+      //sign jwt access token
       const token: string = await this.signToken(savedUser._id.toString(), savedUser.email);
 
+      //send user and token
       return {
         user: savedUser,
         accessToken: token,
@@ -58,12 +57,13 @@ export class AuthService {
   async signin(dto: LoginDto): Promise<{user: User, accessToken :string}>{
     try {
 
-      //validate username and pasword
+      //validate  username and pasword
       const user: User =  await this.validateUser(dto.email, dto.password);
       
       //sign jwt access token
       const token: string = await this.signToken(user._id.toString(), user.email);
 
+        //send user and token
       return {
         user: user,
         accessToken: token,
@@ -95,16 +95,20 @@ export class AuthService {
 
 
   //find user by ID
-  async findUser(userId: string | number): Promise<User> {
-    const user = await this.userModel.findById(userId).lean(); // Convert to plain object
+  async findUser(userId: string | number): Promise<User > {
 
+    //convert userId to ObjectId
+    const objectUserId = typeof userId === 'string' ? new Types.ObjectId(userId) : userId;
+    
+    //find user by user object id
+    const user = await this.userModel.findOne({ _id: objectUserId  }).lean(); 
+    //return user if found
     if (user) {
-      delete (user as Record<string, unknown>).hash; // Assert as a generic object
+      delete (user as Record<string, unknown>).hash;
       return user;
     }
-
+    //throw error if user not found
     throw new NotFoundException('User not found');
-
 
   }
 

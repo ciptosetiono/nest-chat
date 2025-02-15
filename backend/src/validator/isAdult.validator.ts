@@ -5,15 +5,20 @@ const minAge: number = 17;
 @ValidatorConstraint({ async: false })
 export class IsAdultConstraint implements ValidatorConstraintInterface {
   validate(value: any) {
+
+    //if value is not a date or is not a valid date, return false
     if (!(value instanceof Date) || isNaN(value.getTime())) {
-      return false; // Invalid date
+      return false;
     }
 
+    //get today's date
     const today = new Date();
  
+    //Birthday is today's date minus minAge years
     const minBirthday = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
 
-    return value <= minBirthday; // Must be at least 18 years old
+    // Must be at least 18 years old
+    return value <= minBirthday; 
   }
 
   defaultMessage() {

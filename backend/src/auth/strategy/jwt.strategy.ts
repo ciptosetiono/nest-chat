@@ -6,7 +6,8 @@ import { AuthService } from '../auth.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly configService: ConfigService, private authService: AuthService) {
+  constructor(
+    private readonly configService: ConfigService, private authService: AuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false, //refused expired token
@@ -14,12 +15,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: {
-    sub: number;
-    email: string;
-  }) {
+  async validate(payload: {sub: number; email: string;}) {
+    
+    const userId = payload.sub;
+    console.log(userId);
     
     const user = await this.authService.findUser(payload.sub);
     return user;
+    
   }
 }

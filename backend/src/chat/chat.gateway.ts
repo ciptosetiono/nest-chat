@@ -17,7 +17,7 @@ import { GetChatDto } from './dto/get-chat.dto';
 
   @WebSocketGateway({
     cors: {
-      origin: 'http://localhost:3000', // Sesuaikan dengan frontend Anda
+      origin: '*', // allow all sources
       credentials: true,
     },
   })
@@ -25,7 +25,6 @@ import { GetChatDto } from './dto/get-chat.dto';
   export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
     
- 
     constructor(
       private readonly chatService: ChatService
     ) {}
@@ -42,15 +41,17 @@ import { GetChatDto } from './dto/get-chat.dto';
       console.log(`User ${client.data.user?.username || 'unknown'} disconnected`)
     }
  
-
+    //handle send message
     @SubscribeMessage('sendMessage')
     async handleMessage(@MessageBody() dto: CreateChatDto, @ConnectedSocket() client: Socket) {
     
-      //get sender_id from request
+      //get senderId from request
       const senderId = client.data.user._id;
 
+      //save the message
       const chat = await this.chatService.createChat(senderId, dto);
-      console.log('send back the chat to');
+
+      //send message to all clients based on room
       this.server.to(dto.room).emit('receiveMessage', chat);
       
     }
@@ -61,26 +62,28 @@ import { GetChatDto } from './dto/get-chat.dto';
       @MessageBody()  getChatDto: GetChatDto,
       @ConnectedSocket() client: Socket
     ) {
-      console.log(`User join room`);
-      //joint client
+
+      //joint room
       client.join(getChatDto.roomId);
 
-      console.log(getChatDto);
-
-      // ✅ Fetch Old Messages by roomId and chat pagination
+      // ✅ Fetch Old Messages by roomId and pagination
       const { messages, totalMessages } = await this.chatService.getChats(getChatDto);
+      
+      //send the messages to client
       client.emit('oldMessages', { messages, totalMessages });
 
     }
 
+    //handle load more messages
     @SubscribeMessage('loadMessages')
     async loadMessages(
       @MessageBody() getChatDto: GetChatDto,
       @ConnectedSocket() client: Socket
     ) {
-
-      console.log(getChatDto);
+       // ✅ Fetch Old Messages by roomId and chat pagination
       const { messages, totalMessages } = await this.chatService.getChats(getChatDto);
+      
+      //send the messages to client
       client.emit('oldMessages', { messages, totalMessages });
     }
 

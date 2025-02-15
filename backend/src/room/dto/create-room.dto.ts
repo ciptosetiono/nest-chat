@@ -1,5 +1,5 @@
-import { RoomType } from 'src/room/room.schema';
-import { ArrayNotEmpty, IsArray, IsEnum, IsNotEmpty, IsOptional, ValidateIf } from 'class-validator';
+import { RoomType } from '../room.schema';
+import { IsArray, IsEnum, IsNotEmpty, IsOptional, ValidateIf } from 'class-validator';
 
 export class CreateRoomDto {
     @IsNotEmpty()

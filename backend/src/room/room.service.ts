@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Room } from 'src/room/room.schema';
+import { Room } from './room.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateRoomDto } from './dto/create-room.dto';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class RoomService {
@@ -13,18 +13,19 @@ export class RoomService {
         private userService: UserService
     ) { }
 
-    //create room
+    //create new room from user and dto
     async create(userId: string, dto: CreateRoomDto): Promise<Room> {
 
         //find users by username of members
         const members = await this.userService.findByUsernames(dto.members);
+
         //get user ids
         const memberIds = await members.map(user => user._id.toString());
 
-        //updat dto members
+        //inject memberIds to dto
         dto = {...dto, members: memberIds};
 
-        //push the room creator
+        //push the room creator to members
         dto.members.push(userId);
 
         //save the room
@@ -34,10 +35,12 @@ export class RoomService {
         return await createdRoom.save();
     }
 
+    //return all rooms
     async getAll(): Promise<Room[]> {
         return await this.roomModel.find().exec();
     }
 
+    //return rooms that user in members
     async getByMember(userId: string): Promise<Room[]> {
         return await this.roomModel.find({ members: userId }).exec();
     }

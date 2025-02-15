@@ -21,6 +21,7 @@ export class WsJwtGuard extends AuthGuard('jwt') {
     const token =
       client.handshake.auth?.token ||
       client.handshake.headers?.authorization?.split(' ')[1];
+
     //throw exception if token not provided
     if (!token) {
       throw new UnauthorizedException('No token provided');
@@ -29,22 +30,37 @@ export class WsJwtGuard extends AuthGuard('jwt') {
     try {
       //get jwt secet from env file
       const secret = this.configService.get('JWT_SECRET') || 'your-default-secret';
-      //get payload from token
+      
+      //get the payload from the jwt token
       const payload = jwt.verify(token, secret, { ignoreExpiration: true });
+
+      //check the payload for the user id
       if(payload.sub){
-        //get user from
+        //user id is take from payload.sub
         const userId =  payload.sub.toString();
+
+        //find user by id in database
         const user = await this.authService.findUser(userId);
+
+        //throw exception if user not found
         if(!user){
           throw new UnauthorizedException('Invalid or expired token');
         }
-        client.data.user = user; // Store decoded user data
+
+        //store user data in client object
+        client.data.user = user;
+
+        //return true if user found
         return true;
       }
       return false;
- // ✅ Attach user data to WebSocket client
+
     } catch (error) {
+
+      //log error to console
       console.error('[WsAuthGuard] Invalid or expired token:', error.message);
+
+      //throw exception if token is invalid or expired
       throw new UnauthorizedException('Invalid or expired token');
     }
 

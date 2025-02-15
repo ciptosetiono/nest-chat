@@ -24,15 +24,15 @@ export class ChatService {
 
     }
 
-    async getChats(getChatDto: GetChatDto) {
+    async getChats(getChatDto: GetChatDto): Promise<{messages: Chat[], totalMessages: number}>{
   
-      const { roomId, page = DefaultPagination.page, limit = DefaultPagination.limit} = getChatDto;
-    
+      //get roomId, page and limit from request. if page and limit not provided, use default values
+      const {
+        roomId,
+        page = DefaultPagination.page,
+        limit = DefaultPagination.limit
+      } = getChatDto;
 
-      const skip = (page - 1) * limit;
-      console.log('page'+page);
-      console.log('limit'+limit);
-      console.log('skip'+skip);
       //get chats by roomId with pagination
       const chats = await this.chatModel
                             .find({room: roomId})
@@ -45,6 +45,7 @@ export class ChatService {
       //count total chats by roomId without pagination
       const totalChats = await this.chatModel.countDocuments({room: roomId});
 
+      //return messages and total messages
       return {
         messages: chats,
         totalMessages: totalChats

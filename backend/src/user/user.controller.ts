@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Body } from '@nestjs/common';
+import { Controller, Get, Put, Body, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { GetUser } from '../decorator/get-user.decorator';
 import { User } from './user.schema';
 import { JwtGuard } from '../auth/guard';
@@ -13,6 +13,9 @@ export class UserController {
 
     @Get('me')
     getMe(@GetUser() user: User): User{
+        if(!user){
+            throw new ForbiddenException('Invalid token');
+        }
         return user;
     }
 
