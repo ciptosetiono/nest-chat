@@ -54,19 +54,3 @@ export class User{
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
-export interface UserInterface extends Document{
-  _id:string;
-  email: string;
-  username: string;
-  hash: string;
-  name?: string;
-  birthPlace?:string,
-  birthDate?: string,
-  gender?: string;
-  height?: number;
-  weight?:number;
-  horoscope?: string;
-  zodiac?: string;
-  interest?: string[];
-}

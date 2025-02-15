@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { GetChatDto } from './dto/get-chat.dto';
 import { Chat, ChatDocument } from './chat.schema';
-import { NotFoundException } from '@nestjs/common';
 import { DefaultPagination } from 'src/common/const/default-pagination';
 
 

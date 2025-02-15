@@ -2,9 +2,8 @@ import { Body, Controller, Get, Param, Post, Query, Request, UseGuards } from '@
 import { RoomService } from './room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { JwtGuard } from 'src/auth/guard';
-import { ChatService } from 'src/chat/chat.service';
 import { GetUser } from 'src/decorator/get-user.decorator';
-import { UserInterface } from 'src/user/user.schema';
+import { User} from 'src/user/user.schema';
 
 
 @Controller('rooms')
@@ -28,7 +27,7 @@ export class RoomController {
 
   //handle room that user in member
   @Get('me')
-  getMe(@GetUser() user: UserInterface) {
+  getMe(@GetUser() user: User) {
     return this.roomService.getByMember(user._id.toString());
   }
 

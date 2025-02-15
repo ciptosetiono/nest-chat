@@ -1,23 +1,23 @@
-import {  Injectable, BadRequestException, ForbiddenException  } from '@nestjs/common';
+import {  Injectable, BadRequestException, ForbiddenException, NotFoundException  } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as argon  from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
-import { UserInterface } from 'src/user/user.schema';
+import { User} from 'src/user/user.schema';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel('User') private readonly userModel: Model<UserInterface>,
+    @InjectModel('User') private readonly userModel: Model<User>,
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
 
-  async signup(dto: RegisterDto): Promise<{user: UserInterface, accessToken :string}> {
+  async signup(dto: RegisterDto): Promise<{user: User, accessToken :string}> {
 
     //check if username already taken
     if (await this.findUserByUsername(dto.username)) {
@@ -34,12 +34,15 @@ export class AuthService {
       const hashedPassword = await argon.hash(dto.password);
 
       //create new user
-      const user: UserInterface = new this.userModel({ ...dto, hash: hashedPassword });
-      const savedUser = await user.save();
+      const user =  new this.userModel(
+                          { ...dto, hash: hashedPassword 
+                            
+                          });
+      const savedUser: User = await user.save();
 
       //return jwt acces token
        //sign jwt access token
-      const token: string = await this.signToken(savedUser._id, savedUser.email);
+      const token: string = await this.signToken(savedUser._id.toString(), savedUser.email);
 
       return {
         user: savedUser,
@@ -52,14 +55,14 @@ export class AuthService {
    
   }
 
-  async signin(dto: LoginDto): Promise<{user: UserInterface, accessToken :string}>{
+  async signin(dto: LoginDto): Promise<{user: User, accessToken :string}>{
     try {
 
       //validate username and pasword
-      const user: UserInterface | null =  await this.validateUser(dto.email, dto.password);
+      const user: User =  await this.validateUser(dto.email, dto.password);
       
       //sign jwt access token
-      const token: string = await this.signToken(user._id, user.email);
+      const token: string = await this.signToken(user._id.toString(), user.email);
 
       return {
         user: user,
@@ -73,10 +76,10 @@ export class AuthService {
   }
 
 
-  async validateUser(identifier: string, password: string): Promise<UserInterface> {
+  async validateUser(identifier: string, password: string): Promise<User> {
 
     //find user by email or username
-    const user: UserInterface | null = await this.userModel.findOne({$or: [{email: identifier}, {username: identifier}]});
+    const user = await this.userModel.findOne({$or: [{email: identifier}, {username: identifier}]});
 
     if (!user) {
       throw new ForbiddenException(`User not found`);
@@ -92,23 +95,24 @@ export class AuthService {
 
 
   //find user by ID
-  async findUser(userId: string | number): Promise<UserInterface | null> {
+  async findUser(userId: string | number): Promise<User> {
     const user = await this.userModel.findById(userId).lean(); // Convert to plain object
 
-    if (!user) {
-      return null;
+    if (user) {
+      delete (user as Record<string, unknown>).hash; // Assert as a generic object
+      return user;
     }
 
-    delete (user as Record<string, unknown>).hash; // Assert as a generic object
-    return user;
+    throw new NotFoundException('User not found');
+
 
   }
 
-  async findUserByUsername(username:string):Promise<UserInterface | null>{
+  async findUserByUsername(username:string):Promise<User | null>{
      return await this.userModel.findOne({'username': username});
   }
 
-  async findUserByEmail(email:string):Promise<UserInterface | null>{
+  async findUserByEmail(email:string):Promise<User | null>{
     return await this.userModel.findOne({'email': email});
  }
 

@@ -1,8 +1,7 @@
-import { UpdateUserDto } from "./dto/update-user.dto";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserInterface } from "src/user/user.schema";
 import { NotFoundException } from "@nestjs/common";
+import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "src/user/user.schema";
 
 export class UserService {
