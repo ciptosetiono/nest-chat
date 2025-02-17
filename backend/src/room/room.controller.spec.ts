@@ -24,7 +24,7 @@ describe('RoomController', () => {
     email: 'test@example.com',
     hash: 'hashedPassword',
     name: 'Test User',
-    hosroscope: 'Aries',
+    horoscope: 'Aries',
     birthDate: '2021-01-01',
     zodiac: '',
     interests: [],

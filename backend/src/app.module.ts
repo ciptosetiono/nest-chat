@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { ChatModule } from './chat/chat.module';
 import { RoomModule } from './room/room.module';
+import { HoroscopeModule } from './horoscope/horoscope.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { RoomModule } from './room/room.module';
     UserModule,
     ChatModule,
     RoomModule,
+    HoroscopeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

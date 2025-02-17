@@ -18,7 +18,7 @@ describe('ChatService', () => {
     email: 'testmail',
     name: '',
     hash: '',
-    hosroscope: '',
+    horoscope: '',
     zodiac: '',
     interests: []
   };

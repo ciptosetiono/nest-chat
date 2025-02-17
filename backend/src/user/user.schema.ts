@@ -44,7 +44,7 @@ export class User{
   weight?:number;
 
   @Prop()
-  hosroscope:string;
+  horoscope:string;
 
   @Prop()
   zodiac:string;

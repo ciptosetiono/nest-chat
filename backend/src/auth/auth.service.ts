@@ -5,7 +5,7 @@ import * as argon  from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
-import { User} from 'src/user/user.schema';
+import { User, UserDocument} from 'src/user/user.schema';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
@@ -37,14 +37,20 @@ export class AuthService {
       const user =  new this.userModel({ ...dto, hash: hashedPassword, _id: new Types.ObjectId()});
      
       //save the new user
-      const savedUser: User = await user.save();
-
+      const savedUser: UserDocument = await user.save();
+      
+     
       //sign jwt access token
       const token: string = await this.signToken(savedUser._id.toString(), savedUser.email);
 
+      //convert user to object 
+      const userObject = savedUser.toObject();
+      //remove hash field
+      delete userObject.hash;
+
       //send user and token
       return {
-        user: savedUser,
+        user: userObject,
         accessToken: token,
       }
     }
@@ -59,7 +65,7 @@ export class AuthService {
 
       //validate  username and pasword
       const user: User =  await this.validateUser(dto.email, dto.password);
-      
+
       //sign jwt access token
       const token: string = await this.signToken(user._id.toString(), user.email);
 
@@ -79,16 +85,20 @@ export class AuthService {
   async validateUser(identifier: string, password: string): Promise<User> {
 
     //find user by email or username
-    const user = await this.userModel.findOne({$or: [{email: identifier}, {username: identifier}]});
-
+    const user = await this.userModel.findOne({$or: [{email: identifier}, {username: identifier}]}).lean();
+  
     if (!user) {
       throw new ForbiddenException(`User not found`);
     }
-
+    
     //validate the password
     const pwMatches = await argon.verify(user.hash,password);
     if (!pwMatches)
       throw new ForbiddenException('Credentials incorrect');
+
+    //remove hash for respond
+    delete (user as Record<string, unknown>).hash;
+        
     return user;
   }
 
