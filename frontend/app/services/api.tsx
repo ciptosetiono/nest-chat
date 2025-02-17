@@ -43,7 +43,7 @@ export const getProfile = async (token: string) => {
       });
       return response.data;
     } catch (error:unknown) {
-      //throw error.response.data;
+      console.log(error);
     }
   };
 

@@ -11,6 +11,7 @@ import Link from 'next/link';
    const [height, setHeight] = useState('');
    const [weight, setWeight] = useState('');
    const [message, setMessage] = useState('');
+   const [error, setError] = useState('');
 
    useEffect(() => {
     const fetchProfile = async () => {
@@ -63,13 +64,15 @@ import Link from 'next/link';
        const data = await updateProfile(token, userData);
        setMessage('Profile updated successfully');
      } catch (error:any) {
-       setMessage(`Error: ${error.message}`);
+       setError(`Error: ${error.message}`);
      }
    };
 
    return (
      <div className="max-w-md mx-auto mt-10">
        <h2 className="text-2xl font-bold mb-5">Update Profile</h2>
+       {error && <div className="mt-4 text-red-500">{error}</div>}
+       {message && <div className="mt-4 text-green-500">{message}</div>}
        <form onSubmit={handleSubmit}>
         <div className="mb-4">
            <label className="block text-gray-700">Username</label>
@@ -142,7 +145,7 @@ import Link from 'next/link';
          </button>
         
        </form>
-       {message && <div className="mt-4 text-red-500">{message}</div>}
+
      </div>
    );
  }

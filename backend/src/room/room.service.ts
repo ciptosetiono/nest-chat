@@ -2,9 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Room } from './room.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateRoomDto } from './dto/create-room.dto';
+import { CreateRoomDto, SearchRoomDto } from './dto';
 import { UserService } from '../user/user.service';
-
+import { DefaultPagination } from 'src/common/const/default-pagination';
+import { Types } from 'mongoose';
 @Injectable()
 export class RoomService {
 
@@ -46,12 +47,37 @@ export class RoomService {
     }
 
     async getById(id: string): Promise<Room> {
+
+        if (!Types.ObjectId.isValid(id)) {
+            throw new NotFoundException(`Invalid room ID: ${id}`);
+        }
+
         const room = await this.roomModel.findById(id).exec();
+
         if (room) {
            return room;
         }
         throw new NotFoundException(`Room with id ${id} not found`);
     }
 
+    async search(dto: SearchRoomDto): Promise<{rooms:Room[], total:number}> {
+
+        //get query, page and limit from dto
+        const {query, page = DefaultPagination.page, limit = DefaultPagination.limit} = dto;
+
+        //calculate skip
+        const skip = (page - 1) * limit;
+        
+        //search room by name with pagination
+        const rooms = await this.roomModel.find({name: {$regex: query, $options: 'i'}})
+                                            .skip(skip)
+                                            .limit(limit)
+                                            .lean();
+        //count total rooms
+        const total = await this.roomModel.countDocuments({name: {$regex: query, $options: 'i'}});
+    
+        //return rooms and total rooms
+        return {rooms, total};
+    }
     
 }
