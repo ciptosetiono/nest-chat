@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3030';
+const API_URL = 'http://localhost:3001';
 
 export const register = async (email:string, username: string, password: string) => {
   try {
@@ -75,9 +75,9 @@ export const getProfile = async (token: string) => {
     }
   };
 
-  export const getChatDetails = async (token: string, chatId: string) => {
+  export const getRoomById = async (token: string, roomId: string) => {
     try {
-      const response = await axios.get(`${API_URL}/chats/${chatId}`, {
+      const response = await axios.get(`${API_URL}/rooms/${roomId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

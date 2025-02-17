@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { register } from '@/app/services/api';
+import Link from 'next/link';
 
  export default function RegisterPage() {
    const [email, setEmail] = useState('');
@@ -79,6 +80,11 @@ import { register } from '@/app/services/api';
            {error && <div className="text-red-500">{error}</div>}
            {success && <p className="text-green-500">{success}</p>}
          </form>
+
+         <div>
+           already have an account?            
+           <Link href="/auth/login" className='text-blue-500'> Signin here</Link>
+         </div>
        </div>
      </div>
    );

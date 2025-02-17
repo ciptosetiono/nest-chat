@@ -18,8 +18,6 @@ export class ChatService {
 
       const newChat = await this.chatModel.create({...dto, sender: senderId});
 
-      //const savedChat = await newChat.save();
-
       return newChat.populate('sender', 'username');
 
     }

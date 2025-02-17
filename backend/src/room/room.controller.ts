@@ -25,6 +25,12 @@ export class RoomController {
     return this.roomService.getAll();
   }
 
+  //get all rooms
+  @Get(':id')
+  getOne(@Param('id') id: string) {
+    return this.roomService.getById(id);
+  }
+
   //get room that user in member
   @Get('me')
   getMe(@GetUser() user: User) {

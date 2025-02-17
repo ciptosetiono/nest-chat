@@ -15,7 +15,7 @@ const useChat = (roomId: string, token: string | null) => {
   useEffect(() => {
     if (!token || !roomId) return; // ✅ Prevent unnecessary re-renders
 
-    const newSocket: Socket = io("http://localhost:3030", {
+    const newSocket: Socket = io("http://localhost:3001", {
       auth: { token },
     });
 

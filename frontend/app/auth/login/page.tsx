@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/app/services/api';
+import Link from 'next/link';
 
- export default function LoginPage() {
+export default function LoginPage() {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [error, setError] = useState('');
@@ -12,11 +13,10 @@ import { login } from '@/app/services/api';
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
      e.preventDefault();
      try {
-       const data = await login(email, password);
-       console.log(data);
-       localStorage.setItem('user', data.user);
-       localStorage.setItem('token', data.accessToken);
-       router.push('/user/profile');
+      const data = await login(email, password);
+      localStorage.setItem('user', data.user);
+      localStorage.setItem('token', data.accessToken);
+      router.push('/dashboard');
      }catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -61,6 +61,10 @@ import { login } from '@/app/services/api';
            </div>
            {error && <div className="text-red-500">{error}</div>}
          </form>
+         <div>
+           doesn't have an account?            
+           <Link href="/auth/register" className='text-blue-500'> Signup here</Link>
+         </div>
        </div>
      </div>
    );

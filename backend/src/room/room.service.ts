@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Room } from './room.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -45,5 +45,13 @@ export class RoomService {
         return await this.roomModel.find({ members: userId }).exec();
     }
 
+    async getById(id: string): Promise<Room> {
+        const room = await this.roomModel.findById(id).exec();
+        if (room) {
+           return room;
+        }
+        throw new NotFoundException(`Room with id ${id} not found`);
+    }
 
+    
 }
