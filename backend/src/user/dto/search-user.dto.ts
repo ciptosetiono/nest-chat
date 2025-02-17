@@ -1,8 +1,8 @@
-import { IsOptional, IsString, IsInt, Min } from "class-validator";
+import { IsOptional, IsString, IsInt, Min, IsNotEmpty } from "class-validator";
 
 export class SearchUserDto {
     @IsString()
-    @IsOptional()
+    @IsNotEmpty()
     query: string;
 
     @IsOptional()
