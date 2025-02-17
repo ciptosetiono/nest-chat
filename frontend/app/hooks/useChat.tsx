@@ -6,7 +6,7 @@ import {Chat } from "../interfaces";
 const MESSAGES_PER_PAGE = 20;
 
 const useChat = (roomId: string, token: string | null) => {
-  const [messages, setMessages] = useState<Chat[]>([]);
+  const [displayedMessages, setDisplayedMessages] = useState<Chat[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const [page, setPage] = useState(1);
@@ -28,19 +28,24 @@ const useChat = (roomId: string, token: string | null) => {
     //after join room, receive old message from backend
     newSocket.on("oldMessages", async ({ messages: newMessages, totalMessages }) => {
 
-      //reverse the message so the newst at the bottom page
-      await newMessages.reverse();    
-
-      //apply new message to current message
-      setMessages((prev) => [...newMessages, ...prev]);
-      if (messages.length + newMessages.length >= totalMessages) {
-        setHasMore(false);
-      }
+    //reverse the message so the newst at the bottom page
+    const reversedMessages = [...newMessages].reverse();
+ 
+    //apply nreversed message to current message
+    setDisplayedMessages((prev) => {
+        const updatedMessages = [...reversedMessages, ...prev];
+      
+        if (updatedMessages.length >= totalMessages) {
+          setHasMore(false);
+        }
+      
+        return updatedMessages;
+      });
     });
 
     // ✅ Handle incoming messages
     newSocket.on("receiveMessage", (newMessage: Chat) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setDisplayedMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
     return () => {
@@ -70,7 +75,7 @@ const useChat = (roomId: string, token: string | null) => {
     socket.emit("sendMessage", { room: roomId, content: message });
   };
 
-  return { messages, sendMessage, loadMoreMessages: loadMoreMessages || (() => {}), hasMore };
+  return {displayedMessages, sendMessage, loadMoreMessages: loadMoreMessages || (() => {}), hasMore };
 };
 
 export default useChat;
