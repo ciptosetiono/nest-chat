@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { User, Room } from "../interfaces";
 import { getProfile , getRooms} from "../services/api";
+import RoomList from "../components/RoomList";
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [rooms, setRooms]= useState<Room[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // New state to handle loading
   const router = useRouter();
@@ -18,16 +18,19 @@ export default function DashboardPage() {
     const fetchUserData = async () => {
       try {
         const storedToken = localStorage.getItem("token");
-        if (!storedToken) return; // No token, no need to fetch
+        if (!storedToken) {
+          router.push("/auth/login");
+          return;
+        }; // No token, no need to fetch
 
         setToken(storedToken);
 
         //fetch user data
         const userData = await getProfile(storedToken);
+        if(!userData){
+          setError("Failed to fetch user data.");
+        }
         setUser(userData);
-
-        const roomsData = await getRooms(storedToken);   
-        setRooms(roomsData);
 
       } catch (err) {
         setError("Failed to fetch user data.");
@@ -39,30 +42,27 @@ export default function DashboardPage() {
     fetchUserData();
   }, []);
 
-  if (loading) return <p>Loading...</p>; // Prevent SSR mismatch
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/auth/login");
+  }
 
-  console.log(rooms);
+  if (loading) return <p>Loading...</p>; // Prevent SSR mismatch
 
   return (
     <div className="p-6 max-w-xl mx-auto">
-      {error ? (
-        <p className="text-red-500">{error}</p>
-      ) : user ? (
+      {error && <p className="text-red-500">{error}</p>}
+
+      {user ? (
         <div>
           <h1 className="text-2xl font-bold">Chat App</h1>
           <p>Welcome, {user.username}</p>
-          <button className="bg-red-500 text-white p-2 rounded">Sign Out</button>
-          <Link href='/chat/create' className="bg-green-500 text-white p-2 rounded">New</Link>
-          <ul>
-            {rooms.map(room => (
-              <li key={room._id}>
-                <Link href={`/chat/${room._id}`} className="text-blue-500">{room.name}</Link>
-              </li>
-            ))}
-          </ul>
+             <Link href={'/user/profile'} className="bg-blue-500 text-white p-2 rounded mr-2">Profile</Link>
+             <button onClick={handleLogout} className="bg-red-500 text-white p-2 rounded">Sign Out</button>
+          <RoomList/>
         </div>
       ) : (
-        <button className="bg-blue-500 text-white p-2 rounded">Login</button>
+        <> <Link href={'/auth/login'} className="bg-blue-500 text-white p-2 rounded mr-2">Login</Link></>
       )}
     </div>
   );

@@ -62,7 +62,7 @@ export default function LoginPage() {
            {error && <div className="text-red-500">{error}</div>}
          </form>
          <div>
-           doesn't have an account?            
+           Doesn't have an account?            
            <Link href="/auth/register" className='text-blue-500'> Signup here</Link>
          </div>
        </div>

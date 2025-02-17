@@ -76,6 +76,8 @@ export const getProfile = async (token: string) => {
   };
 
   export const getRoomById = async (token: string, roomId: string) => {
+    console.log(`token: ${token}`);
+    console.log(`roomId: ${roomId}`);
     try {
       const response = await axios.get(`${API_URL}/rooms/${roomId}`, {
         headers: {

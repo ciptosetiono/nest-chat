@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { getRooms } from '../services/api';
 import { Room } from '../interfaces';
 
-export default function ChatListPage() {
+export default function RoomList() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [search, setSearch] = useState('');
   const [error, setError] = useState('');
@@ -48,10 +48,10 @@ export default function ChatListPage() {
      }
   
   return (
-    <div className='max-w-md mx-auto mt-10'>
+    <div className='mt-10'>
+      <h2 className="text-2xl font-bold mb-5">Chat Rooms</h2>
       <Link href='/chat/create' className='ml-auto bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'>New Chat</Link>
-      <div className="max-w-md mx-auto mt-10">
-       <h2 className="text-2xl font-bold mb-5">Chat Rooms</h2>
+     
        <input
          type="text"
          value={search}
@@ -74,7 +74,6 @@ export default function ChatListPage() {
        ) : (
          <p>No chats available.</p>
        )}
-     </div>
     </div>
   );
 }

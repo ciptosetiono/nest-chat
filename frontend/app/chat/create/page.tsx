@@ -25,18 +25,13 @@ export default function CreateChatForm() {
        router.push(`/chat/${createdRoom._id}`);
        
      } catch (err: unknown) {
-        if(err instanceof Error){
-          setMessage(`Error: ${err.message}`);
-        }else{
-          setMessage(`Unknown Error`);
-        }
-
+        setMessage(`Error: gagal mengirim pesan`);
      }
    };
 
    return (
      <div className="max-w-md mx-auto mt-10">
-       <h2 className="text-2xl font-bold mb-5">Create Room</h2>
+       <h2 className="text-2xl font-bold mb-5">Create Chat Room</h2>
        <form onSubmit={handleSubmit}>
         <div className="mb-4">
            <label className="block text-gray-700">Room Name</label>
@@ -57,9 +52,13 @@ export default function CreateChatForm() {
              placeholder="Comma-separated user IDs"
            />
          </div>
-         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+         <button type="button" onClick={() => router.back()} className="bg-gray-500 text-white px-4 py-2 rounded">
+           Back
+         </button>
+         <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded mr-2">
            Create
          </button>
+        
        </form>
        {message && <p className="mt-4">{message}</p>}
      </div>
