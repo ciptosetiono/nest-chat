@@ -28,27 +28,27 @@ const useChat = (roomId: string, token: string | null, onNewMessage: (message: C
     //after join room, receive old message from backend
     newSocket.on("oldMessages", async ({ messages: newMessages, totalMessages }) => {
 
-    //reverse the message so the newst at the bottom page
-    const reversedMessages = [...newMessages].reverse();
- 
-    //apply nreversed message to current message
-    setDisplayedMessages((prev) => {
-        const updatedMessages = [...reversedMessages, ...prev];
-      
-        if (updatedMessages.length >= totalMessages) {
-          setHasMore(false);
-        }
-      
-        return updatedMessages;
-      });
+      console.log(newMessages);
+      //reverse the message so the newst at the bottom page
+      const reversedMessages = [...newMessages].reverse();
+  
+      //apply reversed message to current message
+      setDisplayedMessages((prev) => {
+          const updatedMessages = [...reversedMessages, ...prev];
+        
+          if (updatedMessages.length >= totalMessages) {
+            setHasMore(false);
+          }
+        
+          return updatedMessages;
+        });
     });
 
     // ✅ Handle incoming messages
     newSocket.on("receiveMessage", (newMessage: Chat) => {
       setDisplayedMessages((prevMessages) => [...prevMessages, newMessage]);
-
+      console.log(newMessage);
       if (onNewMessage) {
-        console.log(newMessage);
         onNewMessage(newMessage);
       }
 
@@ -81,7 +81,26 @@ const useChat = (roomId: string, token: string | null, onNewMessage: (message: C
     socket.emit("sendMessage", { room: roomId, content: message });
   };
 
-  return {displayedMessages, sendMessage, loadMoreMessages: loadMoreMessages || (() => {}), hasMore };
+  // send message
+  const sendFile= (file: File) => {
+  
+    if (!socket) {
+      console.warn("Socket not connected yet.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      socket.emit("sendFile", {
+          file: reader.result, // File as ArrayBuffer
+          filename: file.name,
+          mimetype: file.type,
+          roomId,
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  return {displayedMessages, sendMessage, sendFile, loadMoreMessages: loadMoreMessages || (() => {}), hasMore };
 };
 
 export default useChat;

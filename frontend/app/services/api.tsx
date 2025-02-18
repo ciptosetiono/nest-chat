@@ -101,7 +101,39 @@ export const getProfile = async (token: string) => {
     }
   };
  
+  export const uploadFile = async (token: string, roomId: string, file: File) => {
+    try {
+      console.log(`roomid: ${roomId}`);
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await axios.post(`${API_URL}/files/upload/${roomId}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      console.log(response.data);
+      return response.data;
+    } catch (error:unknown) {
+      throw error;
+    }
+  };
 
+  export const downloadFile = async (token: string, fileId: string) => {
+    try {
+      const response = await axios.get(`${API_URL}/files/${fileId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'blob',
+      });
+      return response.data;
+    } catch (error:unknown) {
+      throw error;
+    }
+  };
 
   export const logout = () => {
     localStorage.removeItem('token');

@@ -4,7 +4,7 @@ import { Room } from './room.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateRoomDto, SearchRoomDto } from './dto';
 import { UserService } from '../user/user.service';
-import { DefaultPagination } from 'src/common/const/default-pagination';
+import { DefaultPagination } from '../common/const/default-pagination';
 import { Types } from 'mongoose';
 @Injectable()
 export class RoomService {
@@ -24,13 +24,13 @@ export class RoomService {
         const memberIds = await members.map(user => user._id.toString());
 
         //inject memberIds to dto
-        dto = {...dto, members: memberIds};
+        const createRoomDto = {...dto, members: memberIds,  _id: new Types.ObjectId()};
 
         //push the room creator to members
-        dto.members.push(userId);
+        createRoomDto.members.push(userId);
 
         //save the room
-        const createdRoom = new this.roomModel(dto);
+        const createdRoom = new this.roomModel(createRoomDto);
 
         //return the room
         return await createdRoom.save();

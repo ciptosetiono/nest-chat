@@ -30,9 +30,11 @@ describe('ChatService', () => {
   };
 
   const mockChat: Chat = {
+    _id:new Types.ObjectId('60d0fe4f5311236168a109cc'),
     room: mockRoom,
     sender: mockUser,
-    content: 'Hello, world!'
+    content: 'Hello, world!',
+    files:[]
   };
 
   const mockChatDocument = {

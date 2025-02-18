@@ -3,9 +3,11 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import useChat from "@/app/hooks/useChat";
-import { Room, Chat, User } from "@/app/interfaces";
+import { Room, Chat, User, File } from "@/app/interfaces";
 import { getRoomById } from "@/app/services/api";
 import Notification from "@/app/components/Notification";
+import UploadFile from '@/app/components/UploadFile';
+import DownloadFile from '@/app/components/DownloadFile';
 
 export default function DetailRoomPage() {
   const params = useParams();
@@ -39,8 +41,6 @@ export default function DetailRoomPage() {
     }
   }, []);
 
-
-
   const handleSendMessage = () => {
     if (newMessage.trim()) {
       sendMessage(newMessage);
@@ -53,9 +53,6 @@ export default function DetailRoomPage() {
   }
 
   const handleNotification = (chat: Chat) => {
-    console.log(`sender: ${chat.sender._id}`);
-    console.log(user);
-
     if(chat.sender._id != user?._id){
       setNotification(chat);
       setIsNotificationVisible(true);
@@ -68,7 +65,7 @@ export default function DetailRoomPage() {
 
 
   // Initialize chat only when token & roomId exist
-  const { displayedMessages, sendMessage, loadMoreMessages, hasMore } = useChat(roomId, token || null, handleNotification);
+  const { displayedMessages, sendMessage, sendFile, loadMoreMessages, hasMore } = useChat(roomId, token || null, handleNotification);
 
   if (!token || !room || !user) return <div>Loading...</div>;
   
@@ -98,14 +95,17 @@ export default function DetailRoomPage() {
         {displayedMessages.length === 0 ? (
           <p className="text-center text-gray-500">No messages yet.</p>
         ) : (
-          displayedMessages.map((msg, index) => (
+          displayedMessages.map((msg: Chat, index) => (
             <div key={index} className="mb-2">
               <strong>{msg.sender.username}:</strong> {msg.content}
+              {msg.files?.map(file => (
+                 <DownloadFile key={file._id} file={file}/>
+              ))}
             </div>
           ))
         )}
       </div>
-
+      <UploadFile roomId={roomId} onSubmit={sendFile}/>
       <div className="flex mt-4">
         <input
           type="text"
@@ -122,6 +122,7 @@ export default function DetailRoomPage() {
         </button>
       </div>
       <Notification chat={notification} onClose={handleCloseNotification}/>
+    
     </div>
   );
 }

@@ -5,18 +5,20 @@ import { CreateChatDto } from './dto/create-chat.dto';
 import { GetChatDto } from './dto/get-chat.dto';
 import { Chat } from './chat.schema';
 import { DefaultPagination } from '../common/const/default-pagination';
-
+import { Types } from 'mongoose';
+import { File, FileDocument} from '../file/file.schema';
 
 @Injectable()
 export class ChatService {
     constructor(
-        @InjectModel(Chat.name) private chatModel: Model<Chat>
+        @InjectModel(Chat.name) private chatModel: Model<Chat>,
+        @InjectModel(File.name) private fileModel: Model<File>, 
     ) {}
  
     //create chat message
     async createChat(senderId, dto: CreateChatDto): Promise<Chat>{
 
-      const newChat = await this.chatModel.create({...dto, sender: senderId});
+      const newChat = await this.chatModel.create({...dto, sender: senderId,  _id: new Types.ObjectId()});
 
       return newChat.populate('sender', 'username');
 
@@ -36,6 +38,7 @@ export class ChatService {
                             .find({room: roomId})
                             .sort({ createdAt: -1 })
                             .populate('sender', 'username')
+                            .populate('files')
                             .skip((page - 1) * limit)
                             .limit(limit)
                             .exec();
