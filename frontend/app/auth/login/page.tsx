@@ -14,7 +14,7 @@ export default function LoginPage() {
      e.preventDefault();
      try {
       const data = await login(email, password);
-      localStorage.setItem('user', data.user);
+      localStorage.setItem('user', JSON.stringify(data.user));
       localStorage.setItem('token', data.accessToken);
       router.push('/dashboard');
      }catch (err: unknown) {

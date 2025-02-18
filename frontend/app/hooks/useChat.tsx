@@ -5,7 +5,7 @@ import {Chat } from "../interfaces";
 
 const MESSAGES_PER_PAGE = 20;
 
-const useChat = (roomId: string, token: string | null) => {
+const useChat = (roomId: string, token: string | null, onNewMessage: (message: Chat) => void) => {
   const [displayedMessages, setDisplayedMessages] = useState<Chat[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -46,6 +46,12 @@ const useChat = (roomId: string, token: string | null) => {
     // ✅ Handle incoming messages
     newSocket.on("receiveMessage", (newMessage: Chat) => {
       setDisplayedMessages((prevMessages) => [...prevMessages, newMessage]);
+
+      if (onNewMessage) {
+        console.log(newMessage);
+        onNewMessage(newMessage);
+      }
+
     });
 
     return () => {

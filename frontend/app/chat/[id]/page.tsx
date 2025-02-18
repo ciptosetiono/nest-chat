@@ -3,21 +3,24 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import useChat from "@/app/hooks/useChat";
-import { Room } from "@/app/interfaces";
+import { Room, Chat, User } from "@/app/interfaces";
 import { getRoomById } from "@/app/services/api";
+import Notification from "@/app/components/Notification";
 
 export default function DetailRoomPage() {
   const params = useParams();
   const roomId = params?.id as string;
-  const [token, setToken] = useState<string | null>(null); 
+  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null); 
   const [room, setRoom] = useState<Room | null>(null); 
   const [newMessage, setNewMessage] = useState("");
+  const [notification, setNotification] = useState<Chat | null>(null);
+  const [isNotificationVisible, setIsNotificationVisible] = useState(false);
 
   // Get Token from LocalStorage
   useEffect(() => {
-    const fetchRoom = async () => {
-      const storedToken = localStorage.getItem("token");
-      console.log(storedToken);
+    const fetchRoom= async () => {
+      const storedToken = localStorage.getItem("token"); 
       if (storedToken) {
         setToken(storedToken);
         const roomData = await getRoomById(storedToken, roomId);
@@ -27,11 +30,16 @@ export default function DetailRoomPage() {
     fetchRoom();
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser) as User);
+      }
+    }
+  }, []);
 
-  // Initialize chat only when token & roomId exist
-  const { displayedMessages, sendMessage, loadMoreMessages, hasMore } = useChat(roomId, token || null);
 
-  if (!token) return <div>Loading...</div>;
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -44,6 +52,27 @@ export default function DetailRoomPage() {
     loadMoreMessages();   
   }
 
+  const handleNotification = (chat: Chat) => {
+    console.log(`sender: ${chat.sender._id}`);
+    console.log(user);
+
+    if(chat.sender._id != user?._id){
+      setNotification(chat);
+      setIsNotificationVisible(true);
+    }
+  }
+
+  const handleCloseNotification = () => {
+    setNotification(null);
+  }
+
+
+  // Initialize chat only when token & roomId exist
+  const { displayedMessages, sendMessage, loadMoreMessages, hasMore } = useChat(roomId, token || null, handleNotification);
+
+  if (!token || !room || !user) return <div>Loading...</div>;
+  
+  
   return (
     <div className="flex flex-col h-screen p-4 bg-gray-100">
       <div className="flex items-center justify-between mb-4">
@@ -53,7 +82,8 @@ export default function DetailRoomPage() {
         >
           Back
         </button>
-        <h1 className="text-xl font-bold">Chat Room</h1>
+        <h1 className="text-xl font-bold">{room.name}</h1>
+       
         <div></div> 
       </div>
       <div className="flex-1 overflow-y-auto p-4 bg-white shadow-md rounded-lg">
@@ -91,6 +121,7 @@ export default function DetailRoomPage() {
           Send
         </button>
       </div>
+      <Notification chat={notification} onClose={handleCloseNotification}/>
     </div>
   );
 }
