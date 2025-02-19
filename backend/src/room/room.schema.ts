@@ -15,7 +15,9 @@ export type RoomDocument = Room & Document;
     }
 )
 export class Room {
-
+    @Prop({ type: Types.ObjectId, auto: true })
+    _id: Types.ObjectId;
+    
     @Prop()
     name: string;
 

@@ -2,8 +2,8 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { InjectModel } from '@nestjs/mongoose';
 import { File, FileDocument } from './file.schema';
 import { Model, Types} from 'mongoose';
-import { Chat, ChatDocument } from 'src/chat/chat.schema';
-import { Room, RoomDocument } from 'src/room/room.schema';
+import { Chat, ChatDocument } from '../chat/chat.schema';
+import { Room, RoomDocument } from '../room/room.schema';
 import { Multer } from 'multer';
 import { join } from 'path';
 

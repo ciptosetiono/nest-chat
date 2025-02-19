@@ -1,15 +1,13 @@
-import { Controller, Post, Get, Body, Param, UploadedFile, UseInterceptors, Res, NotFoundException } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, UploadedFile, UseGuards, UseInterceptors, Res, NotFoundException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileService } from './file.service';
-import { Multer } from 'multer';
+import { Multer, diskStorage  } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { UploadFileDto } from './dto';
 import { GetUser } from '../decorator/get-user.decorator';
-import { User } from 'src/user/user.schema';
-import { UseGuards } from '@nestjs/common';
-import { JwtGuard } from 'src/auth/guard';
+import { FileService } from './file.service';
+import { User } from '../user/user.schema';
+import { JwtGuard } from '../auth/guard';
 
 @UseGuards(JwtGuard)
 @Controller('files')

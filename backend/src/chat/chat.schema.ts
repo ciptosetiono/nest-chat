@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument, Types } from "mongoose";
 import { Room } from "../room/room.schema";
 import { User } from "../user/user.schema";
-import { File } from "src/file/file.schema";
+import { File } from "../file/file.schema";
 
 //export type ChatDocument = HydratedDocument<Chat>;
 export type ChatDocument = Chat & Document;
@@ -25,8 +25,9 @@ export class Chat {
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: Room.name })
     room: Room;
 
-    @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: File.name, autopopulate: true }])
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'File' }], autopopulate: true })
     files: File[];
+    
 
 }
 

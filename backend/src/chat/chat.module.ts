@@ -16,6 +16,7 @@ import { FileService } from '../file/file.service';
     MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]),
     MongooseModule.forFeature([{ name: Room.name, schema: RoomSchema }]),
     MongooseModule.forFeature([{ name: File.name, schema: FileSchema }]),
+    MongooseModule.forFeature([{ name: File.name, schema: FileSchema }]),
   ],
   providers: [
     AuthService,

@@ -6,7 +6,7 @@ import { CreateChatDto } from './dto/create-chat.dto';
 import { GetChatDto } from './dto/get-chat.dto';
 import { Model, Types, Document } from 'mongoose';
 import { Room, RoomType } from '../room/room.schema';
-import { User } from 'src/user/user.schema';
+import { User } from '../user/user.schema';
 
 describe('ChatService', () => {
   let service: ChatService;
@@ -24,6 +24,7 @@ describe('ChatService', () => {
   };
 
   const mockRoom: Room = {
+    _id: new Types.ObjectId('60d0fe4f5311236168a109cc'),
     name: 'Test Room',
     type: RoomType.PERSONAL,
     members: [mockUser],
@@ -60,6 +61,16 @@ describe('ChatService', () => {
     countDocuments: jest.fn().mockResolvedValue(1),
   };
 
+  const mockFileModel = {
+    create: jest.fn(),
+    find: jest.fn(),
+    findOne: jest.fn(),
+    findById: jest.fn(),
+    findByIdAndUpdate: jest.fn(),
+    findByIdAndDelete: jest.fn(),
+    countDocuments: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -67,6 +78,10 @@ describe('ChatService', () => {
         {
           provide: getModelToken(Chat.name),
           useValue: mockChatModel,
+        },
+        {
+          provide: getModelToken('File'),
+          useValue: mockFileModel, // Add a mock FileModel
         },
       ],
     }).compile();
