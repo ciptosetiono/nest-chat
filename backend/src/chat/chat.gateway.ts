@@ -98,18 +98,23 @@ import * as path from 'path';
       const buffer = Buffer.from(data.file);
 
       // Generate unique filename
-      const filename = `${uuidv4()}-${data.filename}`;
-      const uploadPath = `./uploads/${filename}`;
+      const uniqueFilename = `${uuidv4()}-${data.filename}`;
+      const uploadPath = `./uploads/${uniqueFilename}`;
 
       // Save file locally
       await fs.promises.writeFile(uploadPath, buffer);
 
        // 4️⃣ Store file metadata in MongoDB
-      const newChat = await this.fileService.uploadFile(userId, data.roomId, {
-        filename,
-        mimetype: data.mimetype,
-        path: `/uploads/${filename}`,
-      });
+      const newChat = await this.fileService.uploadFile(
+        userId,
+        data.roomId,
+        {
+          filename:uniqueFilename,
+          originalName: data.filename,
+          mimetype: data.mimetype,
+          path: `/uploads/${uniqueFilename}`,
+        }
+      );
             
       //send message to all clients based on room
       this.server.to(data.roomId).emit('receiveMessage', newChat);

@@ -15,6 +15,18 @@ export class FileService {
         @InjectModel(Room.name) private roomModel: Model<RoomDocument>,
         @InjectModel(Chat.name) private chatModel: Model<ChatDocument>,
     ){}
+    /**
+     * handle upload file
+     * 1. find room by roomId, throw notfound exception if nroom not found
+     * 2. create new Chat Model
+     * 3. create new File model
+     * 4. Push the File Model to Chat Model
+     * 5. return the chat
+     * @param userId
+     * @param roomId 
+     * @param file 
+     * @returns chat
+     */
     async uploadFile(userId:string, roomId: string, file: Multer.File){
 
          //ensure the roomId is valid
@@ -30,32 +42,42 @@ export class FileService {
             throw new NotFoundException(`Chat Room with  Id ${roomId} Not Found`);
         }
 
+        //set the original name of file as chat content
+        const chatContent = `${file.originalName}`;
+
         //create new chat
-        const newChat = await this.createChat(roomId, userId);
+        const newChat = await this.createChat(roomId, userId, chatContent);
 
         //create new file
         const newFile = await this.createFile(newChat._id, file);
        
         //push the new file to chat
         newChat.files.push(newFile);
-        
+        newChat.save();
 
-        //save and return the file
+        //return the file
         return newChat;
 
     }
 
-
-    async createChat(roomId: string, userId: string): Promise<Chat>{
+    /**
+     * save new Chat model to database
+     * @param roomId 
+     * @param userId 
+     * @param content 
+     * @returns Chat
+     */
+    async createChat(roomId: string, userId: string, content: string){
+        //convert roomId & userId from string to objectId
         const roomObjectId = new Types.ObjectId(roomId);
         const userObjectId = new Types.ObjectId(userId);
+
         try {
-             //create new chat
             const newChat = new this.chatModel({
                 _id: new Types.ObjectId(),
                 room: roomObjectId,
                 sender: userObjectId ,
-                content:'',
+                content:content,
             });
             return await newChat.save();
         } catch (error) {
@@ -64,6 +86,12 @@ export class FileService {
         }
     }
 
+    /**
+     * save new File model to databases
+     * @param chatId 
+     * @param file 
+     * @returns File
+     */
     async createFile(chatId: Types.ObjectId, file: Multer.File): Promise<File>{
         try {
             //create new file
@@ -88,7 +116,12 @@ export class FileService {
         }
     }
 
-    
+    /**
+     * find File model By fileId. 
+     * if not found, throw exception
+     * @param fileId 
+     * @returns 
+     */
     async downloadFile(fileId: string): Promise<File> {
      
         //convert string fileId to object Id
@@ -106,7 +139,7 @@ export class FileService {
         return file;
     }
 
-   
+
     getFilePath(file: File): string {
         return join(__dirname, '..', '..', file.path);
     }

@@ -22,7 +22,7 @@ export class FileController {
        storage: diskStorage({
          destination: './uploads',
          filename: (req, file, cb) => {
-           const filename = `${uuidv4()}-${file.originalname}`;
+           const filename = `${uuidv4()}-${file.originalname}`;//create unique filename
            cb(null, filename);
          },
        }),
@@ -44,7 +44,7 @@ export class FileController {
     @Param('fileId') fileId: string,
     @Res() res: Response,
    ){
-        
+
       const file = await this.fileService.downloadFile(fileId);
       if (!file) {
           throw new NotFoundException('File not found');

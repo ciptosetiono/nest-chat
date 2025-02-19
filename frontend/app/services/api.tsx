@@ -123,7 +123,7 @@ export const getProfile = async (token: string) => {
 
   export const downloadFile = async (token: string, fileId: string) => {
     try {
-      const response = await axios.get(`${API_URL}/files/${fileId}`, {
+      const response = await axios.get(`${API_URL}/files/download/${fileId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
