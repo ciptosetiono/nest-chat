@@ -53,8 +53,8 @@ export class FileService {
        
         //push the new file to chat
         newChat.files.push(newFile);
-        newChat.save();
-
+        await newChat.save();
+        await newChat.populate('sender', 'username');
         //return the file
         return newChat;
 

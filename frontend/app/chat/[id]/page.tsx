@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import useChat from "@/app/hooks/useChat";
 import { Room, Chat, User, File } from "@/app/interfaces";
 import { getRoomById } from "@/app/services/api";
+import ChatForm from "@/app/components/ChatForm";
 import Notification from "@/app/components/Notification";
 import UploadFile from '@/app/components/UploadFile';
 import DownloadFile from '@/app/components/DownloadFile';
@@ -106,21 +107,12 @@ export default function DetailRoomPage() {
         )}
       </div>
       <UploadFile roomId={roomId} onSubmit={sendFile}/>
-      <div className="flex mt-4">
-        <input
-          type="text"
-          className="flex-1 p-2 border border-gray-300 rounded-lg"
-          placeholder="Type a message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-        />
-        <button
-          onClick={handleSendMessage}
-          className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
-        >
-          Send
-        </button>
-      </div>
+      <ChatForm
+        value={newMessage}
+        onChange={(e) => setNewMessage((e.target as HTMLInputElement).value)}
+        onSubmit={handleSendMessage}
+      />
+    
       <Notification chat={notification} onClose={handleCloseNotification}/>
     
     </div>
