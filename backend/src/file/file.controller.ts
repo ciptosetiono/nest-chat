@@ -31,7 +31,7 @@ export class FileController {
         @GetUser() user: User,
         @UploadedFile() file: Multer.File, @Body() uploadFileDto: UploadFileDto,
    ) {
-
+       
         return this.fileService.uploadFile(user._id.toString(), roomId, file);
    }
 

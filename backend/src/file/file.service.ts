@@ -55,6 +55,7 @@ export class FileService {
         newChat.files.push(newFile);
         await newChat.save();
         await newChat.populate('sender', 'username');
+        await newChat.populate('files', 'username');
         //return the file
         return newChat;
 
@@ -124,6 +125,11 @@ export class FileService {
      */
     async downloadFile(fileId: string): Promise<File> {
      
+        //ensure the roomId is valid
+        if (!Types.ObjectId.isValid(fileId)) {
+            throw new NotFoundException(`Invalid File ID: ${fileId}`);
+        }
+
         //convert string fileId to object Id
         const fileObjectId = new Types.ObjectId(fileId);
 

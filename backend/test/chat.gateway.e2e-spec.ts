@@ -134,7 +134,6 @@ describe('WebSocket E2E Test', () => {
     });
   });
   
-
   it('Should allow user to send a file', (done) => {
     //clientSocket.emit('joinRoom', { roomId:roomId });
 
