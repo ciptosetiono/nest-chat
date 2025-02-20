@@ -14,7 +14,7 @@ export class RoomController {
     private readonly roomService: RoomService,
   ) { }
 
-  @Post()
+  @Post('/create')
   create(@Request() req, @Body() createRoomDto: CreateRoomDto) {
     return this.roomService.create(req.user._id.toString(), createRoomDto);
   }
@@ -27,14 +27,10 @@ export class RoomController {
 
   //get room that user in member
   @Get('me')
-  getMe(@GetUser() user: User) {
+  getMe(
+    @GetUser() user: User,
+  ) {
     return this.roomService.getByMember(user._id.toString());
-  }
-
-  //get room by id
-  @Get(':id')
-  getOne(@Param('id') id: string) {
-    return this.roomService.getById(id);
   }
 
   @Get('/search')
@@ -45,5 +41,13 @@ export class RoomController {
       return await this.roomService.search(searchRoomDto);
   }
       
+
+
+  //get room by id
+  @Get(':id')
+  getOne(@Param('id') id: string) {
+    return this.roomService.getById(id);
+  }
+
 
 }

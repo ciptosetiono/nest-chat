@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { FileService } from './file.service';
 import { FileController } from './file.controller';
 import { File, FileSchema } from './file.schema';
-import { Room, RoomSchema } from 'src/room/room.schema';
+import { Room, RoomSchema } from '../room/room.schema';
 import { Chat, ChatSchema } from '../chat/chat.schema';
 
 @Module({

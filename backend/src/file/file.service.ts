@@ -35,7 +35,7 @@ export class FileService {
         }
 
         //find chat by roomId
-        const room = await this.roomModel.findById(roomId); 
+        const room = await this.roomModel.findById(new Types.ObjectId(roomId)); 
 
         //throw if chat not found
         if(!room){

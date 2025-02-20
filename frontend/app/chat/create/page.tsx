@@ -20,7 +20,6 @@ export default function CreateChatForm() {
         membersId = members.split(',').map(id => id.trim());
        }
        const createdRoom: Room =  await createRoom(token, name, membersId);
-       console.log(createdRoom);
        setMessage('Chat created successfully');
        router.push(`/chat/${createdRoom._id}`);
        

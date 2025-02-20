@@ -27,10 +27,7 @@ export class UserService {
             const birthDateString = birthDate.toISOString().split("T")[0];
 
             const zodiacs = this.countZodiac(birthDateString );
-            const {zodiac, horoscope } = zodiacs;
-
-            console.log(horoscope);
-         
+            const {zodiac, horoscope } = zodiacs;         
             //inject to dto
            dto = {...dto, birthDate: birthDateString, zodiac, horoscope};
         }

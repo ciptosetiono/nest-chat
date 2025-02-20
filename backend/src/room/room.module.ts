@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { RoomController } from './room.controller';
 import { RoomService } from './room.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ChatModule } from 'src/chat/chat.module';
-import { Room, RoomSchema } from 'src/room/room.schema';
-import { User, UserSchema } from 'src/user/user.schema';
-import { UserService } from 'src/user/user.service';
+import { ChatModule } from '../chat/chat.module';
+import { Room, RoomSchema } from '../room/room.schema';
+import { User, UserSchema } from '../user/user.schema';
+import { UserService } from '../user/user.service';
 
 @Module({
   imports: [

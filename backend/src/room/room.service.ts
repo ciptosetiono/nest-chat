@@ -52,7 +52,7 @@ export class RoomService {
             throw new NotFoundException(`Invalid room ID: ${id}`);
         }
 
-        const room = await this.roomModel.findById(id).exec();
+        const room = await this.roomModel.findById(new Types.ObjectId(id)).exec();
 
         if (room) {
            return room;

@@ -3,7 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import { Socket } from 'socket.io';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Injectable()
 export class WsJwtGuard extends AuthGuard('jwt') {
@@ -24,46 +24,46 @@ export class WsJwtGuard extends AuthGuard('jwt') {
 
     //throw exception if token not provided
     if (!token) {
-      throw new UnauthorizedException('No token provided');
+      return this.throwUnauthorized(client, 'Unauthorized: No token provided');
     }
 
     try {
-      //get jwt secet from env file
+       //get jwt secet from env file
       const secret = this.configService.get('JWT_SECRET') || 'your-default-secret';
       
       //get the payload from the jwt token
-      const payload = jwt.verify(token, secret, { ignoreExpiration: true });
+      const payload = jwt.verify(token, secret, { ignoreExpiration: false });
 
-      //check the payload for the user id
-      if(payload.sub){
-        //user id is take from payload.sub
-        const userId =  payload.sub.toString();
-
-        //find user by id in database
-        const user = await this.authService.findUser(userId);
-
-        //throw exception if user not found
-        if(!user){
-          throw new UnauthorizedException('Invalid or expired token');
-        }
-
-        //store user data in client object
-        client.data.user = user;
-
-        //return true if user found
-        return true;
+      //throw exception if user not found
+      if(!payload || !payload.sub ){
+        return this.throwUnauthorized(client, 'Unauthorized: Invalid or expired token');
       }
-      return false;
 
+      //find user by userId (paylod.sub) in database
+      const user = await this.authService.findUser(payload.sub?.toString() || '');
+
+      //throw exception if user not found
+      if(!user){
+        return this.throwUnauthorized(client, 'Unauthorized: User not found');
+      }
+        
+      client.data.user = user;
+      return true;
     } catch (error) {
-
-      //log error to console
-      console.error('[WsAuthGuard] Invalid or expired token:', error.message);
-
-      //throw exception if token is invalid or expired
-      throw new UnauthorizedException('Invalid or expired token');
+      return this.throwUnauthorized(client, `Unauthorized: ${error.message}`);
     }
+    
+    return false;
 
   }
+
+  throwUnauthorized(client, errorMessage){
+    //throw new UnauthorizedException(errorMessage);
+    client.emit('auth_error', { message: errorMessage });
+    client.disconnect();
+    return false;
+  }
+
+  
 }
 

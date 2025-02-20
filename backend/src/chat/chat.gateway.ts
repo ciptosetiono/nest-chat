@@ -8,18 +8,20 @@ import {
     OnGatewayDisconnect,
     ConnectedSocket
   } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { ChatService } from './chat.service';
-import { FileService } from 'src/file/file.service';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { WsJwtGuard } from 'src/auth/guard/ws-jwt.guard'; 
-import { UseGuards } from '@nestjs/common';
-import { GetChatDto } from './dto/get-chat.dto';
 import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Server, Socket } from 'socket.io';
+import { ChatService } from './chat.service';
+import { FileService } from '../file/file.service';
+import { CreateChatDto } from './dto/create-chat.dto';
+import { WsJwtGuard } from '../auth/guard/ws-jwt.guard'; 
+import { UseGuards } from '@nestjs/common';
+import { GetChatDto } from './dto/get-chat.dto';
+
 
   @WebSocketGateway({
+    namespace: '',
     cors: {
       origin: '*', // allow all sources
       credentials: true,
@@ -39,15 +41,14 @@ import * as path from 'path';
     }
  
     async handleConnection(client: Socket) {
-      console.log(`User ${client.data.user?.username || 'unknown'} connected`);
+      console.log('New connection attempt');
     }
  
     handleDisconnect(client: Socket) {
       console.log(`User ${client.data.user?.username || 'unknown'} disconnected`)
     }
 
-     
-    //handle join chat room
+
     @SubscribeMessage('joinRoom')
     async handleJoinRoom(
       @MessageBody()  getChatDto: GetChatDto,
@@ -57,16 +58,27 @@ import * as path from 'path';
       //joint room
       client.join(getChatDto.roomId);
 
-      // ✅ Fetch Old Messages by roomId and pagination
+      //fetch old chats
+      const { messages, totalMessages } = await this.chatService.getChats(getChatDto);   
+      
+      //send the messages to client
+      client.emit('oldMessages', { messages, totalMessages });
+      
+    }
+
+
+    @SubscribeMessage('loadMessages')
+    async loadMessages(
+      @MessageBody() getChatDto: GetChatDto,
+      @ConnectedSocket() client: Socket
+    ) {
+        // ✅ Fetch Old Messages by roomId and chat pagination
       const { messages, totalMessages } = await this.chatService.getChats(getChatDto);
       
       //send the messages to client
       client.emit('oldMessages', { messages, totalMessages });
-
     }
 
- 
-    //handle send message
     @SubscribeMessage('sendMessage')
     async handleMessage(
       @ConnectedSocket() client: Socket,
@@ -83,18 +95,15 @@ import * as path from 'path';
       this.server.to(dto.room).emit('receiveMessage', chat);
     }
 
-
-    //handle send file
     @SubscribeMessage('sendFile')
     async handleSendFile(
       @ConnectedSocket() client: Socket,
       @MessageBody() data: { file: ArrayBuffer; filename: string; mimetype: string; roomId: string;}
     ) {
 
-      //get senderId from request
+
       const userId = client.data.user._id;
 
-      // Convert ArrayBuffer to Buffer
       const buffer = Buffer.from(data.file);
 
       // Generate unique filename
@@ -103,35 +112,25 @@ import * as path from 'path';
 
       // Save file locally
       await fs.promises.writeFile(uploadPath, buffer);
-
-       // 4️⃣ Store file metadata in MongoDB
-      const newChat = await this.fileService.uploadFile(
-        userId,
-        data.roomId,
-        {
-          filename:uniqueFilename,
-          originalName: data.filename,
-          mimetype: data.mimetype,
-          path: `/uploads/${uniqueFilename}`,
-        }
-      );
-            
-      //send message to all clients based on room
-      this.server.to(data.roomId).emit('receiveMessage', newChat);
       
+      try {
+        const newChat = await this.fileService.uploadFile(
+          userId,
+          data.roomId,
+          {
+            filename:uniqueFilename,
+            originalName: data.filename,
+            mimetype: data.mimetype,
+            path: `/uploads/${uniqueFilename}`,
+          }
+        );
+        
+        //send message to all clients based on room
+        this.server.to(data.roomId).emit('receiveMessage', newChat);
+       } catch (error) {
+        console.log(error);
+       }
     }
 
-    //handle load more messages
-    @SubscribeMessage('loadMessages')
-    async loadMessages(
-      @MessageBody() getChatDto: GetChatDto,
-      @ConnectedSocket() client: Socket
-    ) {
-       // ✅ Fetch Old Messages by roomId and chat pagination
-      const { messages, totalMessages } = await this.chatService.getChats(getChatDto);
-      
-      //send the messages to client
-      client.emit('oldMessages', { messages, totalMessages });
-    }
 
   }

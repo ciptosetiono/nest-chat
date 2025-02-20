@@ -18,7 +18,6 @@ jest.mock('../decorator/get-user.decorator', () => ({
 }));
 
 
-
 const mockUserId = '67b2b296b6f4c6b415fb2f1c';
 const mockUser: User = {
     _id: new Types.ObjectId(mockUserId),

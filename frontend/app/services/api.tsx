@@ -50,7 +50,7 @@ export const getProfile = async (token: string) => {
 
   export const createRoom = async (token: string | null, name:string, members: any) => {
     try {
-      const response = await axios.post(`${API_URL}/rooms`, { name, members}, {
+      const response = await axios.post(`${API_URL}/rooms/create`, { name, members}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -1,9 +1,10 @@
 import { RoomType } from '../room.schema';
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, ValidateIf } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsOptional, MinLength, ValidateIf } from 'class-validator';
 
 export class CreateRoomDto {
     @IsNotEmpty()
-    @ValidateIf(o => o.type != RoomType.PERSONAL)
+    @MinLength(3)
+   // @ValidateIf(o => o.type != RoomType.PERSONAL)
     name: string;
 
     @IsArray()
