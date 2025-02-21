@@ -20,11 +20,11 @@ import { GetChatDto } from './dto/get-chat.dto';
 
 
   @WebSocketGateway({
-    namespace: '',
     cors: {
       origin: '*', // allow all sources
       credentials: true,
     },
+    transports: ['websocket', 'polling'],
   })
   @UseGuards(WsJwtGuard)
   export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -40,7 +40,7 @@ import { GetChatDto } from './dto/get-chat.dto';
     }
  
     async handleConnection(client: Socket) {
-     // console.log('New connection attempt');
+     console.log('New connection attempt');
     }
  
     handleDisconnect(client: Socket) {
@@ -67,6 +67,7 @@ import { GetChatDto } from './dto/get-chat.dto';
       @ConnectedSocket() client: Socket
     ) {
 
+      console.log('client join room');
       //joint room
       client.join(getChatDto.roomId);
 
@@ -122,7 +123,7 @@ import { GetChatDto } from './dto/get-chat.dto';
       const chat = await this.chatService.createChat(senderId, dto);
 
       //send message to all clients based on room
-      this.server.to(dto.room).emit('receiveMessage', chat);
+      this.server.to(dto.roomId).emit('receiveMessage', chat);
     }
 
     /**

@@ -18,7 +18,7 @@ export class Chat {
     sender: Types.ObjectId;
 
     @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Room' })
-    room: Types.ObjectId;
+    roomId: Types.ObjectId;
 
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'File' }] })
     files: Types.ObjectId[];

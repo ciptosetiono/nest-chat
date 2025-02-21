@@ -30,7 +30,7 @@ describe('RoomController', () => {
     .send(createRoomDto)
     .expect(201);
 
-    roomId = response.body._id;
+    roomId = response.body._id.toString();
   });
 
   afterAll(async () => {

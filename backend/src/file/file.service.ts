@@ -79,7 +79,7 @@ export class FileService {
         try {
             const newChat = new this.chatModel({
                 _id: new Types.ObjectId(),
-                room: roomObjectId,
+                roomId: roomObjectId,
                 sender: userObjectId ,
                 content:content,
             });

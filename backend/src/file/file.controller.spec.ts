@@ -44,7 +44,7 @@ let mockChat: Chat = {
     _id: new Types.ObjectId(mockChatId ),
     content: 'file.png',
     sender:  mockUser._id,
-    room: mockRoom._id,
+    roomId: mockRoom._id,
     files:[]
 }
 

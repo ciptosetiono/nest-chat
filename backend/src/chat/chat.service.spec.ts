@@ -32,7 +32,7 @@ describe('ChatService', () => {
 
   const mockChat: Chat = {
     _id:new Types.ObjectId('60d0fe4f5311236168a109cc'),
-    room: mockRoom._id,
+    roomId: mockRoom._id,
     sender: mockUser._id,
     content: 'Hello, world!',
     files:[]
@@ -97,7 +97,7 @@ describe('ChatService', () => {
   describe('createChat', () => {
     it('should create and return a chat message', async () => {
       const createChatDto: CreateChatDto = {
-        room: '60d0fe4f5311236168a109cb',
+        roomId: mockChatDocument._id.toString(),
         content: 'Hello, world!',
       };
 
@@ -107,7 +107,7 @@ describe('ChatService', () => {
 
       expect(result).toMatchObject({
         content: mockChatDocument.content,
-        room: expect.any(Object),
+        roomId: mockChatDocument.roomId,
         sender: expect.any(Object),
       });
     });
