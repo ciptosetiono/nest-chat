@@ -43,8 +43,8 @@ const mockChatId = '60d0fe4f5311236168a109cc';
 let mockChat: Chat = {
     _id: new Types.ObjectId(mockChatId ),
     content: 'file.png',
-    sender:  mockUser,
-    room: mockRoom,
+    sender:  mockUser._id,
+    room: mockRoom._id,
     files:[]
 }
 
@@ -61,7 +61,7 @@ const mockFile: File = {
     chat: mockChat
 }
 
-mockChat.files.push(mockFile);
+mockChat.files.push(mockFile._id);
 
 describe('FileController', () => {
   let controller: FileController;

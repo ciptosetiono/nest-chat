@@ -52,10 +52,13 @@ export class FileService {
         const newFile = await this.createFile(newChat._id, file);
        
         //push the new file to chat
-        newChat.files.push(newFile);
+        newChat.files.push(newFile._id);
         await newChat.save();
+
+        //populate sender and files
         await newChat.populate('sender', 'username');
-        await newChat.populate('files', 'username');
+        await newChat.populate('files');
+
         //return the file
         return newChat;
 
@@ -144,7 +147,6 @@ export class FileService {
         //return the file
         return file;
     }
-
 
     getFilePath(file: File): string {
         return join(__dirname, '..', '..', file.path);

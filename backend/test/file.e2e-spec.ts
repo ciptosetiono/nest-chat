@@ -88,13 +88,13 @@ describe('FileController', () => {
         .set('Authorization', `Bearer ${jwtAccessToken}`)
         .expect(404);
     });
-    /*
+    
     it('should return Unauthorized if no JWT', async () => {
       await request(server)
         .get(`/files/download/${fileId}`)
         .expect(401);
     });
-    */
+    
   });
   
   

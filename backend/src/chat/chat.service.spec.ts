@@ -32,8 +32,8 @@ describe('ChatService', () => {
 
   const mockChat: Chat = {
     _id:new Types.ObjectId('60d0fe4f5311236168a109cc'),
-    room: mockRoom,
-    sender: mockUser,
+    room: mockRoom._id,
+    sender: mockUser._id,
     content: 'Hello, world!',
     files:[]
   };
@@ -103,7 +103,7 @@ describe('ChatService', () => {
 
       jest.spyOn(chatModel, 'create').mockResolvedValue(mockChatDocument as any);
 
-      const result = await service.createChat(mockChat.sender, createChatDto);
+      const result = await service.createChat(mockChat.sender.toString(), createChatDto);
 
       expect(result).toMatchObject({
         content: mockChatDocument.content,

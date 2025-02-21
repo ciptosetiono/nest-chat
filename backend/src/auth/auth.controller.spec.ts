@@ -70,10 +70,10 @@ describe('AuthController', () => {
             expect(authService.signup).toHaveBeenCalledWith(dto);
         });
 
-        it('should throw bad request exception if not valid register dto', async () => {
+        it('should throw bad request exception if not valid dto', async () => {
             const invalidDto: RegisterDto = {
                 username: 'testuser',
-                email: 'invalidEmail',
+                email: 'invalidEmail',//invalid email dto
                 password: 'p',
             };
 

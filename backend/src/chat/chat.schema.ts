@@ -1,10 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument, Types } from "mongoose";
-import { Room } from "../room/room.schema";
-import { User } from "../user/user.schema";
-import { File } from "../file/file.schema";
+import mongoose, { Types } from "mongoose";
 
-//export type ChatDocument = HydratedDocument<Chat>;
 export type ChatDocument = Chat & Document;
 
 @Schema({
@@ -12,23 +8,20 @@ export type ChatDocument = Chat & Document;
     versionKey: false,
 })
 export class Chat {
-
     @Prop({ type: Types.ObjectId, auto: true })
     _id: Types.ObjectId;
 
-    @Prop({})
+    @Prop()
     content: string;
 
-    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: User.name, autopopulate: true })
-    sender: User;
+    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true })
+    sender: Types.ObjectId;
 
-    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: Room.name })
-    room: Room;
+    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Room' })
+    room: Types.ObjectId;
 
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'File' }], autopopulate: true })
-    files: File[];
-    
-
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'File' }] })
+    files: Types.ObjectId[];
 }
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);
