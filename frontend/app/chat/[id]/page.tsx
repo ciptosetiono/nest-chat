@@ -9,6 +9,7 @@ import ChatForm from "@/app/components/ChatForm";
 import Notification from "@/app/components/Notification";
 import UploadFile from '@/app/components/UploadFile';
 import DownloadFile from '@/app/components/DownloadFile';
+import ChatItem from "@/app/components/ChatItem";
 
 export default function DetailRoomPage() {
   const params = useParams();
@@ -72,23 +73,16 @@ export default function DetailRoomPage() {
   
   
   return (
-    <div className="flex flex-col h-screen p-4 bg-gray-100">
+    <div className="flex flex-col h-[calc(100vh-4rem)] p-4 bg-gray-100">
       <div className="flex items-center justify-between mb-4">
-        <button
-          onClick={() => window.history.back()}
-          className="px-4 py-2 bg-gray-500 text-white rounded-lg"
-        >
-          Back
-        </button>
-        <h1 className="text-xl font-bold">{room.name}</h1>
-       
+        <h1 className="text-xl font-bold mx-auto">{room.name}</h1>
         <div></div> 
       </div>
       <div className="flex-1 overflow-y-auto p-4 bg-white shadow-md rounded-lg">
         {hasMore && (
           <button
             onClick={handleMoreMessages}
-            className="block mx-auto mb-2 px-4 py-2 bg-gray-300 text-white rounded-lg hover:bg-gray-500"
+            className="btn"
           >
             Load More
           </button>
@@ -97,8 +91,8 @@ export default function DetailRoomPage() {
           <p className="text-center text-gray-500">No messages yet.</p>
         ) : (
           displayedMessages.map((msg: Chat, index) => (
-            <div key={index} className="mb-2">
-              <strong>{msg.sender.username}:</strong> {msg.content}
+            <div key={index}>
+              <ChatItem username={msg.sender.username} message={msg.content} time={msg.createdAt.toString()}/>
               {msg.files?.map(file => (
                  <DownloadFile key={file._id} file={file}/>
               ))}
@@ -112,7 +106,6 @@ export default function DetailRoomPage() {
         onChange={(e) => setNewMessage((e.target as HTMLInputElement).value)}
         onSubmit={handleSendMessage}
       />
-    
       <Notification chat={notification} onClose={handleCloseNotification}/>
     
     </div>

@@ -8,7 +8,7 @@ import { getProfile , getRooms} from "../services/api";
 import RoomList from "../components/RoomList";
 import Loader from "../components/Loading";
 
-export default function DashboardPage() {
+export default function ChatPage() {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -25,14 +25,6 @@ export default function DashboardPage() {
         }; // No token, no need to fetch
 
         setToken(storedToken);
-
-        //fetch user data
-        const userData = await getProfile(storedToken);
-        if(!userData){
-          setError("Failed to fetch user data.");
-        }
-        setUser(userData);
-
       } catch (err) {
         setError("Failed to fetch user data.");
       } finally {
@@ -47,24 +39,17 @@ export default function DashboardPage() {
   if (loading) return  <div className="p-6 max-w-xl mx-auto"><Loader/></div>// Prevent SSR mismatch
 
   return (
-
-    
-    <div className="hero bg-base-200">
-      <div className="hero-content text-center">
+    <div className="p-6 max-w-xl mx-auto">
       {error && <p className="text-red-500">{error}</p>}
 
-      {user ? (
-
-        <div className="max-w-md">
-           <h1 className="text-4xl font-bold">Chat App</h1>
-           <p className="py-6">
-            Welcome, <b>{user.username}</b>
-            </p>
+      {token ? (
+        <div>
+          <h1 className="text-2xl font-bold">Chat Room</h1>
+          <RoomList filterByUser={false}/>
         </div>
       ) : (
         <> <Link href={'/auth/login'} className="bg-blue-500 text-white p-2 rounded mr-2">Login</Link></>
       )}
-      </div>
     </div>
   );
 }

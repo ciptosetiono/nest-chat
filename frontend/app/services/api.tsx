@@ -7,7 +7,7 @@ export const register = async (email:string, username: string, password: string)
     const response = await axios.post(`${API_URL}/auth/register`, { email, username, password });
     return response.data;
   } catch (error: unknown) {
-      //throw error.response.data;
+    throw error;
   }
 };
 
@@ -17,7 +17,7 @@ export const login = async (email:string, password: string) => {
       const response = await axios.post(`${API_URL}/auth/login`, {email, password });
       return response.data;
     } catch (error:unknown) {
-      //throw error.response.data;
+      throw error;
     }
   };
 
@@ -30,7 +30,7 @@ export const getProfile = async (token: string) => {
       });
       return response.data;
     } catch (error: unknown) {
-     // throw error.response.data;
+      throw error;
     }
   };
 
@@ -57,7 +57,7 @@ export const getProfile = async (token: string) => {
       });
       return response.data;
     } catch (error: unknown) {
-      //throw error.response.data;
+      throw error;
     }
   };
 
@@ -71,7 +71,20 @@ export const getProfile = async (token: string) => {
       });
       return response.data;
     } catch (error: unknown) {
-      //throw error.response.data;
+      throw error;
+    }
+  };
+
+  export const getMyRooms = async (token: string | null) => {
+    try {
+      const response = await axios.get(`${API_URL}/rooms/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error: unknown) {
+      throw error;
     }
   };
 
@@ -84,7 +97,7 @@ export const getProfile = async (token: string) => {
       });
       return response.data;
     } catch (error: unknown) {
-      //throw error.response.data;
+      throw error;
     }
   };
 
@@ -97,7 +110,7 @@ export const getProfile = async (token: string) => {
       });
       return response.data;
     } catch (error:unknown) {
-      //throw error.response.data;
+      throw error;
     }
   };
  
@@ -136,6 +149,7 @@ export const getProfile = async (token: string) => {
   };
 
   export const logout = () => {
+    localStorage.removeItem('user');
     localStorage.removeItem('token');
-    window.location.href = '/login'; // Redirect to login page
+    window.location.href = '/auth/login'; // Redirect to login page
   };

@@ -1,15 +1,26 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createRoom } from '@/app/services/api';
 import { useRouter } from 'next/navigation';
 import { Room } from '@/app/interfaces';
 
 export default function CreateChatForm() {
-   const [name, setName] = useState('');
-   const [members, setMembers] = useState('');
-   const [message, setMessage] = useState('');
-   const router = useRouter();
+  const [token, setToken] = useState('');
+  const [name, setName] = useState('');
+  const [members, setMembers] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
   
+    useEffect(() => {
+      const storageToken = localStorage.getItem('token');
+      if(storageToken){
+        setToken(storageToken);
+      }
+    }, []);
+
+    if(!token) return'';
+
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
      e.preventDefault();
      try {
@@ -20,11 +31,19 @@ export default function CreateChatForm() {
         membersId = members.split(',').map(id => id.trim());
        }
        const createdRoom: Room =  await createRoom(token, name, membersId);
+       setError('');
        setMessage('Chat created successfully');
-       router.push(`/chat/${createdRoom._id}`);
-       
-     } catch (err: unknown) {
-        setMessage(`Error: gagal mengirim pesan`);
+       router.push(`/chat/${createdRoom._id}`);   
+     } catch (err: any) {
+        const errorMessages = err.response?.data?.message;
+        if(errorMessages ){
+          console.log(errorMessages[0]);
+          setError(err.response.data.message[1]);
+        }else{
+          setError(`Error: failed to create room`);
+        }
+        setMessage('');
+      
      }
    };
 
@@ -51,15 +70,16 @@ export default function CreateChatForm() {
              placeholder="Comma-separated user IDs"
            />
          </div>
-         <button type="button" onClick={() => router.back()} className="bg-gray-500 text-white px-4 py-2 rounded">
+         <button type="button" onClick={() => router.back()} className="btn">
            Back
          </button>
-         <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded mr-2">
+         <button type="submit" className="btn btn-accent">
            Create
          </button>
         
        </form>
-       {message && <p className="mt-4">{message}</p>}
+       {message && <div role="alert" className="alert alert-success">{message}</div>}
+       {error && <div role="alert" className="alert alert-error">{error}</div>}
      </div>
    );
  }

@@ -2,73 +2,98 @@
 import { useEffect, useState } from 'react';
 import { getProfile } from '@/app/services/api';
 import Link from 'next/link';
+import Image from "next/image";
+import { UserCircle } from "lucide-react";
+import Loader from '@/app/components/Loading';
 
  export default function Profile() {
-   const [profile, setProfile] = useState<any>(null);
-   const [error, setError] = useState('');
+  const [user, setUser] = useState<any>(null);
+   
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
    useEffect(() => {
-     const fetchProfile = async () => {
+     const fetchUser= async () => {
        try {
          const token = localStorage.getItem('token');;
          if (token) {
            const data = await getProfile(token);
-           setProfile(data);
+           setUser(data);
          } else {
            setError('No token found');
          }
        } catch (err: any) {
          setError(err.message);
        }
+       setIsLoading(false);
      };
-
-     fetchProfile();
+     fetchUser();
    }, []);
 
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
+  if (isLoading)   {
+    return (
+    <div className="flex justify-center items-center h-screen">
+      <Loader />
+    </div>
+    );
   }
 
-  if (!profile) {
-    return <div>Loading...</div>;
+  if (error) {
+    return <div role="alert" className="alert alert-error">{error}</div>;
   }
+
 
    return (
-    <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
-  <h2 className="text-4xl font-semibold mb-8 text-center text-gray-800">Profile</h2>
-  {profile ? (
-    <div className="space-y-6">
-      <div className="text-lg text-gray-700">
-        <p><strong className="text-gray-900">Username:</strong> {profile.username}</p>
-        <p><strong className="text-gray-900">Email:</strong> {profile.email}</p>
-        <p><strong className="text-gray-900">Name:</strong> {profile.name}</p>
-        <p><strong className="text-gray-900">Gender:</strong> {profile.gender}</p>
-        <p><strong className="text-gray-900">Height:</strong> {profile.height}</p>
-        <p><strong className="text-gray-900">Weight:</strong> {profile.weight}</p>
-        <p><strong className="text-gray-900">Birth Date:</strong> {profile.birthDate}</p>
-        <p><strong className="text-gray-900">Zodiac:</strong> {profile.zodiac}</p>
-        <p><strong className="text-gray-900">Horoscope:</strong> {profile.horoscope}</p>
+    <div className="flex justify-center items-center bg-gray-100">
+      <div className="card w-96 bg-base-100 shadow-xl p-5">
+        <div className="flex flex-col items-center">
+        {user.avatar ? (
+          <Image
+            src={user.avatar}
+            alt="User Avatar"
+            width={80}
+            height={80}
+            className="rounded-full border-2 border-primary"
+          />
+        ) : (
+          <UserCircle size={80} className="text-gray-500" />
+        )}
+
+        <h2 className="text-xl font-semibold mt-3">{user.username}</h2>
+        <p className="text-gray-500">{user.email}</p>
+
+        {user.bio && <p className="mt-2 text-center text-gray-600">{user.bio}</p>}
+
+        <div className="mt-4 text-sm text-gray-700 w-full">
+            <div className="flex justify-between border-b py-2">
+              <span className="font-medium">Birthday:</span>
+              <span>{user.birthdate || "Not set"}</span>
+            </div>
+            <div className="flex justify-between border-b py-2">
+              <span className="font-medium">Height:</span>
+              <span>{user.weight ? `${user.height} cm` : "Not set"}</span>
+            </div>
+            <div className="flex justify-between border-b py-2">
+              <span className="font-medium">Weight:</span>
+              <span>{user.weight ? `${user.weight} kg` : "Not set"}</span>
+            </div>
+            <div className="flex justify-between border-b py-2">
+              <span className="font-medium">zodiac:</span>
+              <span>{user.weight ? `${user.zodiac}` : "Not set"}</span>
+            </div>
+            <div className="flex justify-between border-b py-2">
+              <span className="font-medium">chinese zodiac:</span>
+              <span>{user.weight ? `${user.horoscope}` : "Not set"}</span>
+            </div>
+          
+          </div>
+
+        {/* Action Buttons */}
+        <div className="mt-4 flex gap-2">
+          <Link className="btn btn-primary" href='/user/update'> Edit Profile</Link>
+        </div>
       </div>
-
-      <div className="flex justify-center space-x-4 mt-8">
-        <Link
-          href="/dashboard"
-          className="px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition ease-in-out duration-300"
-        >
-          Back
-        </Link>
-
-        <Link
-          href="/user/update"
-          className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition ease-in-out duration-300"
-        >
-          Update Profile
-        </Link>
       </div>
     </div>
-  ) : (
-    <p className="text-center text-gray-600">Loading profile...</p>
-  )}
-</div>
    );
  }

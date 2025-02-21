@@ -3,10 +3,10 @@ import Link from 'next/link';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getRooms } from '../services/api';
+import { getRooms, getMyRooms} from '../services/api';
 import { Room } from '../interfaces';
 
-export default function RoomList() {
+export default function RoomList({filterByUser}: {filterByUser: boolean}) {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [search, setSearch] = useState('');
   const [error, setError] = useState('');
@@ -17,8 +17,16 @@ export default function RoomList() {
          try {
            const token = localStorage.getItem('token');
            if (token) {
-             const data = await getRooms(token);
-             setRooms(data);
+            let data;
+              if(filterByUser){
+                data = await getMyRooms(token);
+              }else{
+                data = await getRooms(token);
+              }
+
+              if(data){
+                setRooms(data);
+              }
            } else {
              setError('No token found');
            }
@@ -48,16 +56,14 @@ export default function RoomList() {
      }
   
   return (
-    <div className='mt-10'>
-      <h2 className="text-2xl font-bold mb-5">Chat Rooms</h2>
-      <Link href='/chat/create' className='ml-auto bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'>New Chat</Link>
-     
+    <div>
+      <Link href='/chat/create' className='btn btn-accent float-right'>New</Link>
        <input
          type="text"
          value={search}
          onChange={(e) => setSearch(e.target.value)}
          className="w-full px-3 py-2 border rounded mb-5"
-         placeholder="Search chats..."
+         placeholder="Search room..."
        />
        {filteredRooms.length > 0 ? (
          <ul>

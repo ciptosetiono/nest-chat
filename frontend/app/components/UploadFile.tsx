@@ -25,12 +25,12 @@ export default function UploadFile({roomId, onSubmit}: UploadFileProps) {
   };
 
   return (
-    <div className="mb-4">
+    <div className="flex justify-end">
       <form onSubmit={handleUpload}>
-        <input type="file" onChange={handleFileChange} className="mb-2" />
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-          Upload File
-        </button>
+      <input type="file" onChange={handleFileChange} className="file-input file-input-bordered file-input-accent file-input-xs"/>
+      <button type="submit" className="btn btn-accent btn-outline btn-xs">
+        Send File
+      </button>
       </form>
       {message && <p className="mt-2">{message}</p>}
     </div>

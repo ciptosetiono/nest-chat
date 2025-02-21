@@ -3,13 +3,16 @@
 import { useState, useEffect } from 'react';
 import { getProfile, updateProfile } from '@/app/services/api';
 import Link from 'next/link';
- export default function UpdateProfileForm() {
+import Loader from '@/app/components/Loading';
+
+export default function UpdateProfileForm() {
    const [username, setUsername] = useState('');
    const [name, setName] = useState('');
    const [birthDate, setBirthDate] = useState('');
    const [gender, setGender] = useState('');
    const [height, setHeight] = useState('');
    const [weight, setWeight] = useState('');
+   const [isLoading, setIsLoading] = useState(true);
    const [message, setMessage] = useState('');
    const [error, setError] = useState('');
 
@@ -53,6 +56,7 @@ import Link from 'next/link';
     };
 
      fetchProfile();
+     setIsLoading(false);
    }, []);
 
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -68,11 +72,20 @@ import Link from 'next/link';
      }
    };
 
+   if (isLoading)   {
+    return (
+    <div className="flex justify-center items-center h-screen">
+      <Loader />
+    </div>
+    );
+  }
+
+
    return (
      <div className="max-w-md mx-auto mt-10">
        <h2 className="text-2xl font-bold mb-5">Update Profile</h2>
-       {error && <div className="mt-4 text-red-500">{error}</div>}
-       {message && <div className="mt-4 text-green-500">{message}</div>}
+       {error && <div role="alert" className="alert alert-error">{error}</div>}
+       {message && <div role="alert" className="alert alert-success">{message}</div>}
        <form onSubmit={handleSubmit}>
         <div className="mb-4">
            <label className="block text-gray-700">Username</label>
@@ -136,11 +149,11 @@ import Link from 'next/link';
 
          <Link
             href="/user/profile"
-            className="px-6 py-3 transition"
+            className="btn"
           >
             Back
           </Link>
-         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+         <button type="submit" className="btn btn-primary">
            Update
          </button>
         
