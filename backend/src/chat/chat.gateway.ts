@@ -72,7 +72,9 @@ import { GetChatDto } from './dto/get-chat.dto';
       client.join(getChatDto.roomId);
 
       //fetch old messages
-      const { messages, totalMessages } = await this.chatService.getChats(getChatDto);   
+      const { messages, totalMessages } = await this.chatService.getChats(getChatDto); 
+      
+      console.log(messages);
       
       //send the old messages to client
       client.emit('oldMessages', { messages, totalMessages });

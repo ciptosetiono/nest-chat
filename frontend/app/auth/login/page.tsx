@@ -1,15 +1,23 @@
 "use client";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/app/services/api';
 import Link from 'next/link';
 import { InputText } from '@/app/components/forms/InputText';
+import Loader from '@/app/components/Loading';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const router = useRouter();
+
+  useEffect(() =>{
+    setIsLoading(false);
+  }, []);
+
+  if(isLoading) return <Loader/>
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

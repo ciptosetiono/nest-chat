@@ -44,7 +44,7 @@ export class ChatService {
 
     // Get chats by roomId with pagination
     const chats = await this.chatModel
-      .find({ room: roomId })
+      .find({ roomId: roomId })
       .sort({ createdAt: -1 })
       .populate('sender', 'username')
       .populate('files')

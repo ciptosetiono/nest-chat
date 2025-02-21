@@ -40,7 +40,7 @@ describe('WebSocket E2E Test', () => {
       .set('Authorization', `Bearer ${jwtAccessToken}`)
       .send(createRoomDto)
       .expect(201);
-    roomId = response.body._id;
+    roomId = response.body._id.toString();
 
     await new Promise<void>((resolve, reject) => {
       clientSocket = io(`http://localhost:${port}`, {
@@ -121,7 +121,7 @@ describe('WebSocket E2E Test', () => {
   it('should allow user to send message and receive back the message', (done) => {
     // Send a message
     const messageDto = {
-      room: roomId,
+      roomId: roomId,
       content: 'Hello, this is a test message!',
     };
 
@@ -129,7 +129,7 @@ describe('WebSocket E2E Test', () => {
     //Expect to receive the message
     clientSocket.once('receiveMessage', (message) => {
       expect(message.content).toBe(messageDto.content);
-      expect(message.room).toBe(roomId);
+      expect(message.roomId).toBe(roomId);
       done();
     });
   });
@@ -149,7 +149,7 @@ describe('WebSocket E2E Test', () => {
     });
     
     clientSocket.once('receiveMessage', (message) => {
-      expect(message.room.toString()).toEqual(roomId);
+      expect(message.roomId.toString()).toEqual(roomId);
       expect(message.content).toEqual(filename);
       expect(message.files.length).toBeGreaterThanOrEqual(1);
       done();

@@ -31,8 +31,6 @@ export class WsJwtGuard extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const client: Socket = context.switchToWs().getClient();   
 
-
-    console.log('wsguard running...');
     // Get JWT token from client
     const token =
       client.handshake.auth?.token ||
@@ -40,7 +38,6 @@ export class WsJwtGuard extends AuthGuard('jwt') {
 
     // Throw exception if token not provided
     if (!token) {
-      console.log('no token provided');
       return this.throwUnauthorized(client, 'Unauthorized: No token provided');
     }
 

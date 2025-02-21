@@ -78,7 +78,7 @@ const useChat = (roomId: string, token: string | null, onNewMessage: (message: C
       console.warn("Socket not connected yet.");
       return;
     }
-    socket.emit("sendMessage", { room: roomId, content: message });
+    socket.emit("sendMessage", { roomId: roomId, content: message });
   };
 
   // send message
