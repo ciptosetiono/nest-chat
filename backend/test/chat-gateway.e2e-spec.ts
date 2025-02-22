@@ -59,13 +59,17 @@ describe('WebSocket E2E Test', () => {
     });
   });
 
+  beforeEach(() => {
+    clientSocket.removeAllListeners(); // Clear all previous listeners before each test
+  });
+  
+
   afterAll(async () => {
     clientSocket.disconnect();
     clientSocket.close();
     await closeE2E();
   });
   
-
   it('Should NOT allow join room without valid JWT Token', (done) => {
 
     const invalidClientSocket = io(`http://localhost:${port}`, {
@@ -88,7 +92,6 @@ describe('WebSocket E2E Test', () => {
     
   });
   
-
   it('should allow user to join room and receive old messages', (done) => {
     //try join room
     clientSocket.emit('joinRoom', { roomId:roomId });
@@ -117,25 +120,28 @@ describe('WebSocket E2E Test', () => {
         done();
       });
   });
-    
-  it('should allow user to send message and receive back the message', (done) => {
-    // Send a message
+     
+  it('should allow user to send text message and receive back the message', (done) => {
+    clientSocket.emit('joinRoom', { roomId: roomId });
+
     const messageDto = {
       roomId: roomId,
       content: 'Hello, this is a test message!',
     };
 
     clientSocket.emit('sendMessage', messageDto);
+
     //Expect to receive the message
     clientSocket.once('receiveMessage', (message) => {
+      console.log('receive text message');
       expect(message.content).toBe(messageDto.content);
       expect(message.roomId).toBe(roomId);
       done();
     });
   });
   
-  it('Should allow user to send a file', (done) => {
-    //clientSocket.emit('joinRoom', { roomId:roomId });
+  it('Should allow user to send a chat file and receive back the chat file', (done) => {
+    clientSocket.emit('joinRoom', { roomId:roomId });
 
     const filename = 'test-file.jpeg';
     const imagePath = path.join(__dirname, 'assets', filename);
@@ -149,11 +155,12 @@ describe('WebSocket E2E Test', () => {
     });
     
     clientSocket.once('receiveMessage', (message) => {
+      console.log('receive file message');
       expect(message.roomId.toString()).toEqual(roomId);
       expect(message.content).toEqual(filename);
       expect(message.files.length).toBeGreaterThanOrEqual(1);
       done();
     });
-        
   });
+  
 });

@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ChatService } from './chat.service';
+import { RoomService } from '../room/room.service';
+import { UserService } from '../user/user.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Chat } from './chat.schema';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -13,7 +15,7 @@ describe('ChatService', () => {
   let chatModel: Model<Chat>;
 
   const mockUser: User = {
-    _id: new Types.ObjectId('60d0fe4f5311236168a109cc'),
+    _id: new Types.ObjectId(),
     username: 'testuser1',
     email: 'testmail',
     name: '',
@@ -23,15 +25,28 @@ describe('ChatService', () => {
     interests: []
   };
 
-  const mockRoom: Room = {
-    _id: new Types.ObjectId('60d0fe4f5311236168a109cc'),
-    name: 'Test Room',
-    type: RoomType.PERSONAL,
-    members: [mockUser],
+  const mockUserModel= {
+    findOne: jest.fn().mockResolvedValue(mockUser),
+    findById: jest.fn().mockResolvedValue(mockUser),
   };
 
+  const mockRoom: Room = {
+    _id: new Types.ObjectId(),
+    name: 'Test Room',
+    type: RoomType.PERSONAL,
+    members: [mockUser._id],
+  };
+
+  const mockRoomModel = {
+    find: jest.fn(),
+    findOne: jest.fn().mockResolvedValue(mockRoom),
+    findById: jest.fn().mockResolvedValue(mockRoom),
+    findByIdAndUpdate: jest.fn().mockResolvedValue(mockRoom)
+  };
+
+
   const mockChat: Chat = {
-    _id:new Types.ObjectId('60d0fe4f5311236168a109cc'),
+    _id:new Types.ObjectId(),
     roomId: mockRoom._id,
     sender: mockUser._id,
     content: 'Hello, world!',
@@ -75,14 +90,25 @@ describe('ChatService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ChatService,
+        RoomService,
+        UserService,
         {
           provide: getModelToken(Chat.name),
           useValue: mockChatModel,
         },
         {
+          provide: getModelToken(Room.name),
+          useValue: mockRoomModel,
+        },
+        {
+          provide: getModelToken(User.name),
+          useValue: mockUserModel,
+        },
+        {
           provide: getModelToken('File'),
           useValue: mockFileModel, // Add a mock FileModel
         },
+        
       ],
     }).compile();
 
@@ -98,7 +124,7 @@ describe('ChatService', () => {
     it('should create and return a chat message', async () => {
       const createChatDto: CreateChatDto = {
         roomId: mockChatDocument._id.toString(),
-        content: 'Hello, world!',
+        content: mockChatDocument.content,
       };
 
       jest.spyOn(chatModel, 'create').mockResolvedValue(mockChatDocument as any);
@@ -111,12 +137,24 @@ describe('ChatService', () => {
         sender: expect.any(Object),
       });
     });
+
+    it('should return not found for invalid RoomId', async () => {
+      const createChatDto: CreateChatDto = {
+        roomId: 'invalid-RoomId',
+        content: mockChatDocument.content,
+      };
+
+      jest.spyOn(mockRoomModel, 'findOne').mockResolvedValue(null); 
+
+      await expect(service.createChat(mockChat.sender.toString(), createChatDto))
+              .rejects.toThrowError('Room not found');
+    });
   });
 
   describe('getChats', () => {
     it('should return chats with pagination', async () => {
       const getChatDto: GetChatDto = {
-        roomId: '60d0fe4f5311236168a109cb',
+        roomId: mockRoom._id.toString(),
         page: 1,
         limit: 10,
       };
@@ -140,8 +178,24 @@ describe('ChatService', () => {
         messages: chats,
         totalMessages: totalChats,
       });
-      expect(chatModel.find).toHaveBeenCalledWith({ room: getChatDto.roomId });
-      expect(chatModel.countDocuments).toHaveBeenCalledWith({ room: getChatDto.roomId });
+      expect(chatModel.find).toHaveBeenCalledWith({ roomId: getChatDto.roomId });
+      expect(chatModel.countDocuments).toHaveBeenCalledWith({ roomId: getChatDto.roomId });
     });
+
+    it('should return not found for invalid RoomId', async () => {
+      
+      const InvalidGetChatDto: GetChatDto = {
+        roomId: 'invalid-roomId',//invalid roomId
+        page: 1,
+        limit: 10,
+      };
+
+      jest.spyOn(mockRoomModel, 'findOne').mockResolvedValue(null); 
+      
+      await expect(service.getChats(InvalidGetChatDto))
+            .rejects.toThrowError('Room not found');
+      
+    });
+
   });
 });

@@ -8,7 +8,9 @@ import { File, FileSchema } from '../file/file.schema';
 import { Room, RoomSchema } from '../room/room.schema';
 import { ChatGateway } from './chat.gateway';
 import { AuthService } from '../auth/auth.service';
+import { RoomService } from '../room/room.service';
 import { FileService } from '../file/file.service';
+import { UserService } from '../user/user.service';
 
 @Module({
   imports:[
@@ -16,12 +18,13 @@ import { FileService } from '../file/file.service';
     MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]),
     MongooseModule.forFeature([{ name: Room.name, schema: RoomSchema }]),
     MongooseModule.forFeature([{ name: File.name, schema: FileSchema }]),
-    MongooseModule.forFeature([{ name: File.name, schema: FileSchema }]),
   ],
   providers: [
     AuthService,
     ChatService,
     ChatGateway,
+    RoomService,
+    UserService,
     FileService,
     JwtService,
   ],

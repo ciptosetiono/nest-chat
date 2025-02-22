@@ -15,7 +15,7 @@ import { ChatService } from './chat.service';
 import { FileService } from '../file/file.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { WsJwtGuard } from '../auth/guard/ws-jwt.guard'; 
-import { UseGuards } from '@nestjs/common';
+import { InternalServerErrorException, UseGuards } from '@nestjs/common';
 import { GetChatDto } from './dto/get-chat.dto';
 
 
@@ -40,7 +40,7 @@ import { GetChatDto } from './dto/get-chat.dto';
     }
  
     async handleConnection(client: Socket) {
-     console.log('New connection attempt');
+     //console.log('New connection attempt');
     }
  
     handleDisconnect(client: Socket) {
@@ -124,6 +124,8 @@ import { GetChatDto } from './dto/get-chat.dto';
       //save the message
       const chat = await this.chatService.createChat(senderId, dto);
 
+      console.log(chat);
+
       //send message to all clients based on room
       this.server.to(dto.roomId).emit('receiveMessage', chat);
     }
@@ -171,9 +173,9 @@ import { GetChatDto } from './dto/get-chat.dto';
         );
         
         //send message to all clients based on room
-        this.server.to(data.roomId).emit('receiveMessage', newChat);
+        await this.server.to(data.roomId).emit('receiveMessage', newChat);
        } catch (error) {
-        //console.log(error);
+          throw new InternalServerErrorException(error.message);
        }
     }
 

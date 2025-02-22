@@ -6,7 +6,8 @@ import { Chat, ChatDocument } from '../chat/chat.schema';
 import { Room, RoomDocument } from '../room/room.schema';
 import { Multer } from 'multer';
 import { join } from 'path';
-
+import { ChatService } from '../chat/chat.service';
+import { CreateChatDto } from '../chat/dto/create-chat.dto';
 
 @Injectable()
 export class FileService {
@@ -14,6 +15,7 @@ export class FileService {
         @InjectModel(File.name) private fileModel: Model<FileDocument>,
         @InjectModel(Room.name) private roomModel: Model<RoomDocument>,
         @InjectModel(Chat.name) private chatModel: Model<ChatDocument>,
+        private chatService: ChatService,
     ){}
     /**
      * handle upload file
@@ -42,19 +44,20 @@ export class FileService {
             throw new NotFoundException(`Chat Room with  Id ${roomId} Not Found`);
         }
 
-        //set the original name of file as chat content
-        const chatContent = `${file.originalName}`;
-
         //create new chat
-        const newChat = await this.createChat(roomId, userId, chatContent);
+        const createChatDto: CreateChatDto= {
+            roomId: roomId,
+            content: `${file.originalName}`,
+        } 
+        const newChat = await this.chatService.createChat(userId,createChatDto);
 
         //create new file
         const newFile = await this.createFile(newChat._id, file);
-       
+
         //push the new file to chat
         newChat.files.push(newFile._id);
         await newChat.save();
-
+        
         //populate sender and files
         await newChat.populate('sender', 'username');
         await newChat.populate('files');
@@ -106,7 +109,7 @@ export class FileService {
                 mimetype: file.mimetype,
                 chat: chatId
             });
-            //save and return the file
+            //save the file
             await  newFile.save()
             
             //populate the chat with the new file

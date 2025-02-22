@@ -44,12 +44,29 @@ export class UserService {
         throw new BadRequestException('Failed to update user');
     }
 
+
+    async findById(userId: string){
+        
+        //check usermId is valid format
+        if (!Types.ObjectId.isValid(userId)) {
+            throw new BadRequestException('Invalid UserId');
+        }
+        //find user in DB
+        const user =  this.userModel.findById(new Types.ObjectId(userId));
+
+        if(!user){
+            throw new NotFoundException('User Not Found');
+        }
+
+        return user;
+
+    }
+
     async findByUsernames(usernames: string[]): Promise<User[]> {
         return this.userModel
                         .find({username: {$in: usernames}})
                         .lean();
     }
-
 
     async searchUsers(dto: SearchUserDto): Promise<{users: User[], total:number}> {
 

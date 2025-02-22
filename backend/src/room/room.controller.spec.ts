@@ -68,7 +68,7 @@ describe('RoomController', () => {
         _id: new Types.ObjectId('60d0fe4f5311236168a109cb'),
         name: 'Test Room',
         type: RoomType.PERSONAL,
-        members: [mockUser, { ...mockUser, _id: new Types.ObjectId('60d0fe4f5311236168a109cb'), }],
+        members: [mockUser._id],
       };
 
       jest.spyOn(roomService, 'create').mockResolvedValue(result);
@@ -85,7 +85,7 @@ describe('RoomController', () => {
         _id: new Types.ObjectId('60d0fe4f5311236168a109cb'),
         name: 'Test Room',
         type: RoomType.PERSONAL,
-        members: [mockUser],
+        members: [mockUser._id],
       },
     ];
 
@@ -103,7 +103,7 @@ describe('RoomController', () => {
         _id: new Types.ObjectId('60d0fe4f5311236168a109cb'),
         name: 'Test Room',
         type: RoomType.PERSONAL,
-        members: [mockUser],
+        members: [mockUser._id],
       },
     ];
 

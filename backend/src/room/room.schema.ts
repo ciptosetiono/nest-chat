@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument, Types } from "mongoose";
-import { User } from "../user/user.schema";
+
 
 export enum RoomType {
     PERSONAL = 'personal',
@@ -24,8 +24,8 @@ export class Room {
     @Prop({ enum: RoomType, default: RoomType.PERSONAL })
     type: RoomType;
 
-    @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: User.name, autopopulate: true }])
-    members: User[];
+    @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'User' })
+    members: mongoose.Types.ObjectId[];
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);

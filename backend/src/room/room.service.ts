@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Room } from './room.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -20,14 +20,14 @@ export class RoomService {
         //find users by username of members
         const members = await this.userService.findByUsernames(dto.members);
 
-        //get user ids
-        const memberIds = await members.map(user => user._id.toString());
+        //get member ids
+        const memberIds = await members.map(user => user._id);
 
         //inject memberIds to dto
         const createRoomDto = {...dto, members: memberIds,  _id: new Types.ObjectId()};
 
-        //push the room creator to members
-        createRoomDto.members.push(userId);
+        //push the room sender userIdto members
+        createRoomDto.members.push(new Types.ObjectId(userId));
 
         //save the room
         const createdRoom = new this.roomModel(createRoomDto);
@@ -41,25 +41,7 @@ export class RoomService {
         return await this.roomModel.find().exec();
     }
 
-    //return rooms that user in members
-    async getByMember(userId: string): Promise<Room[]> {
-        return await this.roomModel.find({ members: userId }).exec();
-    }
-
-    async getById(id: string): Promise<Room> {
-
-        if (!Types.ObjectId.isValid(id)) {
-            throw new NotFoundException(`Invalid room ID: ${id}`);
-        }
-
-        const room = await this.roomModel.findById(new Types.ObjectId(id)).exec();
-
-        if (room) {
-           return room;
-        }
-        throw new NotFoundException(`Room with id ${id} not found`);
-    }
-
+    
     async search(dto: SearchRoomDto): Promise<{rooms:Room[], total:number}> {
 
         //get query, page and limit from dto
@@ -79,5 +61,48 @@ export class RoomService {
         //return rooms and total rooms
         return {rooms, total};
     }
-    
+
+    async addUserToRoom(roomId: string, userId: string) {
+
+        const room = await this.getById(roomId);
+
+        //check the userId is valid
+        const user = await this.userService.findById(userId);
+        if(!user){
+            throw new BadRequestException('User not Found');
+        }
+
+        try {
+            if (!room.members.some(member => member.equals(user._id))) {
+                room.members.push(user._id);
+                await room.save();
+            }
+            return room;
+        } catch (error) {
+            console.log("Failed Add user to room ..."+error);
+            throw new InternalServerErrorException(error.message);
+        }
+        
+    }
+
+    //return rooms that user in members
+    async getByMember(userId: string): Promise<Room[]> {
+        return await this.roomModel.find({ members: userId }).exec();
+    }
+
+    async getById(id: string){
+
+        if (!Types.ObjectId.isValid(id)) {
+            throw new NotFoundException(`Room not found`);
+        }
+
+        const room = await this.roomModel.findById(new Types.ObjectId(id));
+
+        if (!room) {
+            throw new NotFoundException(`Room with id ${id} not found`);
+        }
+        return room;
+      
+    }
+
 }

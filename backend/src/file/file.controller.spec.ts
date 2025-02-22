@@ -36,7 +36,7 @@ const mockRoom: Room = {
     _id:  new Types.ObjectId(mockRoomId),
     name: 'Test Room',
     type: RoomType.PERSONAL,
-    members:[mockUser]
+    members:[mockUser._id]
 }
 
 const mockChatId = '60d0fe4f5311236168a109cc';
