@@ -45,18 +45,15 @@ export class UserService {
     }
 
 
-    async findById(userId: string){
+    async findById(userId: string): Promise<User | null>{
         
         //check usermId is valid format
         if (!Types.ObjectId.isValid(userId)) {
-            throw new BadRequestException('Invalid UserId');
+            throw new  NotFoundException('User Not Found');
         }
+
         //find user in DB
         const user =  this.userModel.findById(new Types.ObjectId(userId));
-
-        if(!user){
-            throw new NotFoundException('User Not Found');
-        }
 
         return user;
 

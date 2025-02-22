@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Room } from './room.schema';
+import { Room, RoomDocument } from './room.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateRoomDto, SearchRoomDto } from './dto';
 import { UserService } from '../user/user.service';
@@ -36,12 +36,10 @@ export class RoomService {
         return await createdRoom.save();
     }
 
-    //return all rooms
     async getAll(): Promise<Room[]> {
         return await this.roomModel.find().exec();
     }
 
-    
     async search(dto: SearchRoomDto): Promise<{rooms:Room[], total:number}> {
 
         //get query, page and limit from dto
@@ -96,7 +94,7 @@ export class RoomService {
             throw new NotFoundException(`Room not found`);
         }
 
-        const room = await this.roomModel.findById(new Types.ObjectId(id));
+        const room = await this.roomModel.findById(new Types.ObjectId(id)) ;
 
         if (!room) {
             throw new NotFoundException(`Room with id ${id} not found`);
