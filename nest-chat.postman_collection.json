@@ -1,0 +1,642 @@
+{
+	"info": {
+		"_postman_id": "50228094-5350-4f1e-8303-132b89ec62eb",
+		"name": "nest-chat",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "600831"
+	},
+	"item": [
+		{
+			"name": "files",
+			"item": [
+				{
+					"name": "upload",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2IyYjI5NmI2ZjRjNmI0MTVmYjJmMWMiLCJlbWFpbCI6InpvZGlhY3Rlc3RAZ21haWwuY29tIiwiaWF0IjoxNzQwMDQ3OTM4LCJleHAiOjE3NDA2NTI3Mzh9.YkpTlcYpsFxShxl0V--XYkef262qhSaCIilXYesqjS4"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.1"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "C:\\Users\\Sertifikasi\\Downloads\\WhatsApp Image 2025-02-18 at 10.10.46.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/files/upload/67b2ab59f7e6135d6bff0e85?=",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"files",
+								"upload",
+								"67b2ab59f7e6135d6bff0e85"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2IyYjI5NmI2ZjRjNmI0MTVmYjJmMWMiLCJlbWFpbCI6InpvZGlhY3Rlc3RAZ21haWwuY29tIiwiaWF0IjoxNzM5ODY0NjE1LCJleHAiOjE3NDA0Njk0MTV9.BL7T5kWCs3fC-1e_Wi0I1_VpgT-NaTrxRstRrNlAq-8"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.1"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "C:\\Users\\Sertifikasi\\Downloads\\WhatsApp Image 2025-02-18 at 10.10.46.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/files/download/67b441d5b8804a37479bb37c?=",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"files",
+								"download",
+								"67b441d5b8804a37479bb37c"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "room",
+			"item": [
+				{
+					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2IyYjI5NmI2ZjRjNmI0MTVmYjJmMWMiLCJlbWFpbCI6InpvZGlhY3Rlc3RAZ21haWwuY29tIiwiaWF0IjoxNzM5NzgxMTc3LCJleHAiOjE3NDAzODU5Nzd9.X_McQ_ee03yEnHTk9hKbLtUiZq5OzvnRdLfuz41cyfE"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"create test room\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3001/rooms"
+					},
+					"response": []
+				},
+				{
+					"name": "get-all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2IyYjI5NmI2ZjRjNmI0MTVmYjJmMWMiLCJlbWFpbCI6InpvZGlhY3Rlc3RAZ21haWwuY29tIiwiaWF0IjoxNzM5NzgxMTc3LCJleHAiOjE3NDAzODU5Nzd9.X_McQ_ee03yEnHTk9hKbLtUiZq5OzvnRdLfuz41cyfE"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"create test room\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}:{{port}}/rooms"
+					},
+					"response": []
+				},
+				{
+					"name": "get-by-id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.1"
+							}
+						],
+						"url": "{{host}}:{{port}}/rooms/67ac45b1da3b71d9b384c73a"
+					},
+					"response": []
+				},
+				{
+					"name": "me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2IyYjI5NmI2ZjRjNmI0MTVmYjJmMWMiLCJlbWFpbCI6InpvZGlhY3Rlc3RAZ21haWwuY29tIiwiaWF0IjoxNzM5NzgxMTc3LCJleHAiOjE3NDAzODU5Nzd9.X_McQ_ee03yEnHTk9hKbLtUiZq5OzvnRdLfuz41cyfE"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.1"
+							}
+						],
+						"url": "{{host}}:{{port}}3001/rooms/me"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "horoscope",
+			"item": [
+				{
+					"name": "zodiac",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"date\":\"2021-05-11\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}t:{{port}}/horoscope/zodiac"
+					},
+					"response": []
+				},
+				{
+					"name": "chinese-zodiac",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"date\":\"2021-05-11\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}:{{port}}/horoscope/chinese-zodiac"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2IwMDcwZDYwMDU5MjgzYTQwNzA0MzUiLCJlbWFpbCI6ImNoYWRkZkBnbWFpbC5jb20iLCJpYXQiOjE3Mzk1OTAzOTksImV4cCI6MTczOTU5MTI5OX0.m1AwfUz5Wedqa3sa9AqNxUI1kQPSD6K50bsqsQqZ5H4"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.0"
+							}
+						],
+						"url": "{{host}}:{{port}}/users/me"
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2IyYjI5NmI2ZjRjNmI0MTVmYjJmMWMiLCJlbWFpbCI6InpvZGlhY3Rlc3RAZ21haWwuY29tIiwiaWF0IjoxNzM5NzY2NDQ1LCJleHAiOjE3NDAzNzEyNDV9.Se3JMsfPV8x8wPURBX6H-prIlOgGrdaDRfk7rF-5xzc"
+							}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.0"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"zodiactest\",\n\t\"birthDate\": \"1991-02-16\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}{{port}}/users/update"
+					},
+					"response": []
+				},
+				{
+					"name": "search",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "import { Test, TestingModule } from '@nestjs/testing';import { INestApplication, ValidationPipe } from '@nestjs/common';import * as request from 'supertest';import { App } from 'supertest/types';import { MongoMemoryServer } from 'mongodb-memory-server';import mongoose from 'mongoose';import { Express } from 'express';import { AppModule } from './../src/app.module';import { IsEmail } from 'class-validator';import { UpdateUserDto } from 'src/user/dto';let mongod: MongoMemoryServer;describe('AppController (e2e)', () => {  let app: INestApplication<App>;  let server: any;  let jwtAccessToken: string;  beforeAll(async () => {    //setup database use mongodb memoery server    mongod = await MongoMemoryServer.create();    const uri = mongod.getUri();    process.env.DATABASE_URL = uri;     // Load the entire application module    const moduleFixture: TestingModule = await Test.createTestingModule({      imports: [AppModule],    }).compile();    app = moduleFixture.createNestApplication();    // Apply global validation pipe    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));    await app.init();    server = app.getHttpServer();  });  const validUser = {    username: 'testuser',    name:'test use',    email: 'test@example.com',    password: 'Test1234!',  };  const invalidUser = {    username: 'testuser',    email: 'invalid-email',//invalid email    password: 'Test1234!',  };  describe('/auth', () => {    describe('/auth/register', () => {      it('should return a new user and jwt acces token', async () => {               const response  = await request(server)                          .post('/auth/register')                          .send(validUser)                          .expect(201);        expect(response.body).toHaveProperty('user');        expect(response.body.user.email).toBe(validUser.email);        expect(response.body).toHaveProperty('accessToken');      });      it('should return bad request exception if user not valid', async () => {         await request(server)            .post('/auth/register')            .send(invalidUser )            .expect(400);      });          });    describe('/auth/login', () => {      it('should be return a user and JWT accessToken if user valid', async() => {          const loginDto = {            email: validUser.email,            password: validUser.password          };            const response = await request(server)                          .post('/auth/login')                          .send(loginDto)                          .expect(200);                expect(response.body).toHaveProperty('user');          expect(response.body).toHaveProperty('accessToken');          jwtAccessToken = response.body.accessToken;      });      it('should be throw bad request exceptionif user not valid', async () =>{          const invalidLoginDto = {            email: invalidUser.email,            password: invalidUser.password          };          await request(server)                .post('/auth/login')                .send()                .expect(400);      });    });  });  describe('/users', () => {    describe('/users/me', () => {      it('should return user by valid jwt access token', async () =>{        const response = await request(server)                              .get('/users/me')                              .set('Authorization', `Bearer ${jwtAccessToken}`)                              .expect(200)        expect(response.body).toHaveProperty('email');      });      it('should return Unauthorized access if access token invalid',  async() => {        const response = await request(server)                .get('/users/me')                .expect(401);      });    });    describe('/users/update', () => {        it('should return User if the userDto isvalid', async () => {          const updateUserDto: UpdateUserDto = {            name: validUser.name,            birthPlace: 'Demak',            birthDate: '1996-06-14',            height: 175,            weight: 60,            horoscope: '',            zodiac: '',            interests: []          }          const response = await request(server)                  .put('/users/update')                  .set('Authorization', `Bearer ${jwtAccessToken}`)                  .send(updateUserDto)                  .expect(200);          expect(response.body).toHaveProperty('birthPlace');          expect(response.body.birthPlace).toBe(updateUserDto.birthPlace);                  });        it('should return bad request exception if the userDto is invalid', async () => {          const updateUserDto: UpdateUserDto = {            name: validUser.name,            birthPlace: 'Demak',            birthDate: '19960614', // invalid date            height: 175,            weight: 60,            horoscope: '',            zodiac: '',            interests: []          }          await request(server)                  .put('/users/update')                  .set('Authorization', `Bearer ${jwtAccessToken}`)                  .send(updateUserDto)                  .expect(400);                });    });    describe('/users/search', () => {      it('should return user list by query provided', async () =>{        const response = await request(server)            .get('/users/search')            .set('Authorization', `Bearer ${jwtAccessToken}`)            .send({ query: validUser.name })            .expect(200);        expect(response.body).toHaveProperty('users');        expect(response.body.users).toBeInstanceOf(Array);        expect(response.body.users.length).toBeGreaterThan(0);                        });          });  });  afterAll(async() => {    jest.clearAllTimers(); // Bersihkan timer    await mongoose.connection.close();     await mongoose.disconnect();    await mongod.stop();    await app.close();  });});"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.0"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"query\": \"testuser\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}:{{port}}/users/search"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.0"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"testmail@gmail.com\",\n\t\"username\": \"testuser\",\n\t\"name\": \"testname\",\n\t\"password\": \"defef\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}:{{port}}/auth/register"
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": []
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": true,
+						"disableUrlEncoding": false,
+						"disableCookies": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/10.3.0"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"zodiactest@gmail.com\",\n\t\"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{host}}:{{port}}/auth/login"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost"
+		},
+		{
+			"key": "port",
+			"value": "3001"
+		}
+	]
+}

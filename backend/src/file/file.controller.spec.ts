@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FileController } from './file.controller';
 import { FileService } from './file.service';
 import { JwtGuard } from '../auth/guard';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { GetUser } from '../decorator/get-user.decorator';
 import { User } from '../user/user.schema';
 import { Response } from 'express';
@@ -18,9 +18,9 @@ jest.mock('../decorator/get-user.decorator', () => ({
 }));
 
 
-const mockUserId = '67b2b296b6f4c6b415fb2f1c';
+
 const mockUser: User = {
-    _id: new Types.ObjectId(mockUserId),
+    _id: new Types.ObjectId(),
     username: 'testuser',
     email: 'test@example.com',
     hash: 'hashedPassword',
@@ -31,30 +31,28 @@ const mockUser: User = {
     interests: [],
 };
 
-const mockRoomId = '60d0fe4f5311236168a109cc';
 const mockRoom: Room = {
-    _id:  new Types.ObjectId(mockRoomId),
+    _id:  new Types.ObjectId(),
     name: 'Test Room',
     type: RoomType.PERSONAL,
     members:[mockUser._id]
 }
 
-const mockChatId = '60d0fe4f5311236168a109cc';
 let mockChat: Chat = {
-    _id: new Types.ObjectId(mockChatId ),
+    _id: new Types.ObjectId(),
     content: 'file.png',
     sender:  mockUser._id,
     roomId: mockRoom._id,
     files:[]
 }
 
-const mockFileId = '60d0fe4f5311236168a109cc';
+
 const fileName = 'test.png';
 const path =  './uploads/'+fileName;
 const file = { originalname: fileName } as Multer.File;
 
 const mockFile: File = {
-    _id: new Types.ObjectId(mockFileId ),
+    _id: new Types.ObjectId(),
     filename: fileName,
     path: path,
     mimetype: 'png',
@@ -97,11 +95,35 @@ describe('FileController', () => {
 
         const uploadFileDto: UploadFileDto = {file};
 
-        const result = await controller.uploadFile(mockRoomId, mockUser, file, uploadFileDto);
+        const result = await controller.uploadFile(mockRoom._id.toString(), mockUser, file, uploadFileDto);
 
         expect(result).toEqual(mockChat);
-        expect(fileService.uploadFile).toHaveBeenCalledWith(mockUserId, mockRoomId, file);
+        expect(fileService.uploadFile).toHaveBeenCalledWith(mockUser._id.toString(), mockRoom._id.toString(), file);
     });
+
+    it('should return notfound for invalid roomId', async () => {
+
+      const invalidRoomId = 'invalid-room-id';
+      const uploadFileDto: UploadFileDto = {file};
+
+      jest.spyOn(fileService, 'uploadFile').mockRejectedValue(new NotFoundException('Room not found'));
+
+      await expect(controller.uploadFile(invalidRoomId, mockUser, file, uploadFileDto)).rejects.toThrow(NotFoundException);
+
+    });
+
+    it('should return BadRewuextException for invalid file', async() => {
+        const uploadFileDto: UploadFileDto = {
+          ...file,
+          mimetype: 'txt' //invalid mimetype
+        };
+        jest.spyOn(fileService, 'uploadFile').mockRejectedValue(new BadRequestException('Bad request'));
+
+        await expect(controller.uploadFile(mockRoom._id.toString(), mockUser, file, uploadFileDto)).rejects.toThrow(BadRequestException);
+
+
+    });
+    
   });
 
   describe('downloadFile', () => {
@@ -109,9 +131,9 @@ describe('FileController', () => {
 
       const res = { sendFile: jest.fn() } as unknown as Response;
 
-      await controller.downloadFile(mockFileId, res);
+      await controller.downloadFile(mockFile._id.toString(), res);
 
-      expect(fileService.downloadFile).toHaveBeenCalledWith(mockFileId);
+      expect(fileService.downloadFile).toHaveBeenCalledWith(mockFile._id.toString());
       expect(res.sendFile).toHaveBeenCalledWith(path);
     });
 

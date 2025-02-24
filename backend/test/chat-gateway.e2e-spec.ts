@@ -49,7 +49,6 @@ describe('WebSocket E2E Test', () => {
       });
 
       clientSocket.on('connect', () => {
-        console.log('WebSocket connected');
         resolve();
       });
 
@@ -133,7 +132,6 @@ describe('WebSocket E2E Test', () => {
 
     //Expect to receive the message
     clientSocket.once('receiveMessage', (message) => {
-      console.log('receive text message');
       expect(message.content).toBe(messageDto.content);
       expect(message.roomId).toBe(roomId);
       done();
@@ -155,7 +153,6 @@ describe('WebSocket E2E Test', () => {
     });
     
     clientSocket.once('receiveMessage', (message) => {
-      console.log('receive file message');
       expect(message.roomId.toString()).toEqual(roomId);
       expect(message.content).toEqual(filename);
       expect(message.files.length).toBeGreaterThanOrEqual(1);

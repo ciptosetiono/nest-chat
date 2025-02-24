@@ -36,15 +36,15 @@ import { GetChatDto } from './dto/get-chat.dto';
     ) {}
  
     afterInit(server: Server) {
-      //console.log('WebSocket server initialized');
+      
     }
  
     async handleConnection(client: Socket) {
-     //console.log('New connection attempt');
+    
     }
  
     handleDisconnect(client: Socket) {
-     // console.log(`User ${client.data.user?.username || 'unknown'} disconnected`)
+    
     }
 
      /**
@@ -67,15 +67,12 @@ import { GetChatDto } from './dto/get-chat.dto';
       @ConnectedSocket() client: Socket
     ) {
 
-      console.log('client join room');
       //joint room
       client.join(getChatDto.roomId);
 
       //fetch old messages
       const { messages, totalMessages } = await this.chatService.getChats(getChatDto); 
-      
-      console.log(messages);
-      
+           
       //send the old messages to client
       client.emit('oldMessages', { messages, totalMessages });
 
@@ -123,8 +120,6 @@ import { GetChatDto } from './dto/get-chat.dto';
 
       //save the message
       const chat = await this.chatService.createChat(senderId, dto);
-
-      console.log(chat);
 
       //send message to all clients based on room
       this.server.to(dto.roomId).emit('receiveMessage', chat);
