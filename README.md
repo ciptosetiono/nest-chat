@@ -25,35 +25,38 @@ A Simple Chat Application using NestJS for the backend, Next.js for the frontend
 <h2>Installation</h2>
 
 **1. Clone Repository**
-
+```bash
 git clone https://github.com/ciptosetiono/nest-chat.git
 cd nest-chat
+```
 
 **2. Setup Backend (NestJS)**
-
+```bash
 cd backend
 npm install
 cp .env.example .env
+```
 
 Edit the .env file according to the required configurations, such as the MongoDB database and JWT secret key.
-
 Run the backend server:
-
+```bash
 npm run start:dev
+```
 
 By default, the backend will run at http://localhost:3001
 
 **3. Setup Frontend (Next.js)**
-
+```bash
 cd frontend
 npm install
 cp .env.example .env
+```
 
 Edit the .env file to set up the backend URL.
-
-Run the frontend server:
-
+<br>Run the frontend server:</br>
+```bash
 npm run dev
+```
 
 By default, the frontend will run at http://localhost:3000
 
